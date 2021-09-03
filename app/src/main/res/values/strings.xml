@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SMPT</string>
+
+    <string name="login__button__login">Zaloguj</string>
+    <string name="login__label__login">Logowanie</string>
+    <string name="login__hint__login">Login</string>
+    <string name="login__hint__password">Hasło</string>
 </resources>

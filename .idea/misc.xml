@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/activity_login.xml" value="0.15885416666666666" />
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/drawable/button_backgorund.xml" value="0.1453125" />
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/drawable/button_text.xml" value="0.1453125" />
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1453125" />
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/activity_main.xml" value="0.15885416666666666" />
         <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/activity_splash.xml" value="0.15885416666666666" />
         <entry key="..\:/Users/Praktyki/SMPT/app/src/main/res/layout/activity_main.xml" value="0.10572916666666667" />
