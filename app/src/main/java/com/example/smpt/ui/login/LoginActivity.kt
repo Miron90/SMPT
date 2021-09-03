@@ -17,8 +17,17 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        viewModel.success.observe(this, {
+            if(it)
+                startActivity(Intent(this, MainActivity::class.java))
+        })
+
         binding.btnLogin.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            attemptLogin(binding.inputLogin.text.toString(), binding.inputPassword.text.toString())
         }
+    }
+
+    private fun attemptLogin(login: String, password: String) {
+        viewModel.attemptLogin(login, password)
     }
 }
