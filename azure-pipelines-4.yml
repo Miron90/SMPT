@@ -6,11 +6,11 @@
 trigger:
 - master
 
-
+pool:
+  vmImage: 'ubuntu-latest'
 
 jobs:
 - job: "my_app_build"
-  pool: "default"
   steps:
   - task: Gradle@2
     inputs:
