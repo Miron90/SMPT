@@ -6,35 +6,17 @@
 trigger:
 - master
 
-
-
-jobs:
-- job: "my_app_build"
-  pool:
+pool:
     vmImage: 'ubuntu-latest'
-  steps:
-  - task: Gradle@2
-    inputs:
-      jdkDirectory: "C:\\Program Files\\Java\\jdk-16.0.2"
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      publishJUnitResults: false
-      testResultsFiles: '**/TEST-*.xml'
-      tasks: 'assembleDebug'
-  - task: AndroidSigning@3
-    inputs:
-      apkFiles: '**/*.apk'
-      apksign: false
-      zipalign: false
 
-  - task: CopyFiles@2
-    inputs:
-      contents: '**/*.apk'
-      targetFolder: '$(Build.ArtifactStagingDirectory)'
 
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'drop'
-      publishLocation: 'Container'
+steps:
+- task: Gradle@2
+  inputs:
+    jdkDirectory: "C:\\Program Files\\Java\\jdk-16.0.2"
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
+    testResultsFiles: '**/TEST-*.xml'
+    tasks: 'assembleDebug'
