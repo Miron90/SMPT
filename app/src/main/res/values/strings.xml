@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SMPT</string>
+    <string name="main_map_description">View representing map</string>
+    <string name="main_map_button_text">Show Troops</string>
 </resources>
