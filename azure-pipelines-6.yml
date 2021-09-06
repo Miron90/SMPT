@@ -11,7 +11,7 @@ jobs:
   - task: AndroidSigning@3
     inputs:
       apkFiles: 'cos/1.apk'
-      apksignerKeystoreFile: 'C:\agent1\key'
+      apksignerKeystoreFile: 'C:/agent1/key'
       apksignerKeystorePassword: 'admin123'
       apksignerKeystoreAlias: 'Als'
       apksignerKeyPassword: 'admin123'
