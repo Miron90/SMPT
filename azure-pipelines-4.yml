@@ -30,5 +30,10 @@ jobs:
   - task: CopyFiles@2
     inputs:
       contents: '**/*.apk'
-      targetFolder: 'C:/agent1/apk'
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+
   - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
