@@ -4,8 +4,11 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 
 
-steps:
-- task: AndroidSigning@3
-  inputs:
-    apkFiles: '**/*.apk'
-    apksign: false
+jobs:
+- job: "my_app_build"
+  pool: "default"
+  steps:
+  - task: AndroidSigning@3
+    inputs:
+      apkFiles: '**/*.apk'
+      apksign: false
