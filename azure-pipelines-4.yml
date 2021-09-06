@@ -26,3 +26,9 @@ jobs:
       apkFiles: '**/*.apk'
       apksign: false
       zipalign: false
+
+  - task: CopyFiles@2
+    inputs:
+      contents: '**/*.apk'
+      targetFolder: 'C:/agent1/apk'
+  - task: PublishBuildArtifacts@1
