@@ -9,7 +9,7 @@ trigger:
 
 
 jobs:
-- job: "_my-app-build"
+- job: "my_app_build"
   pool: "default"
   steps:
   - task: Gradle@2
