@@ -5,7 +5,7 @@
 
 
 jobs:
-- job: "my_app_build"
+- job: "my_app_apk"
   pool: "default"
   steps:
   - task: AndroidSigning@3
