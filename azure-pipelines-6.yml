@@ -10,7 +10,7 @@ jobs:
   steps:
   - task: AndroidSigning@3
     inputs:
-      apkFiles: '**/*.apk'
+      apkFiles: 'cos/1.apk'
       apksignerKeystoreFile: 'C:\Users\Praktyki\Desktop\key'
       apksignerKeystorePassword: 'admin123'
       apksignerKeystoreAlias: 'Als'
