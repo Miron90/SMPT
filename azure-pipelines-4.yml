@@ -23,6 +23,6 @@ jobs:
       tasks: 'assembleDebug'
   - task: AndroidSigning@3
     inputs:
-      apkFiles: 'cos/1.apk'
+      apkFiles: '**/*.apk'
       apksign: false
       zipalign: false
