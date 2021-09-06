@@ -29,7 +29,6 @@
         </activity>
         <activity
             android:name=".ui.second.SecondActivity"
-                <category android:name="android.intent.category.DEFAULT"/>
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
