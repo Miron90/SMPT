@@ -10,5 +10,5 @@ jobs:
   steps:
   - task: AndroidSigning@3
     inputs:
-      apkFiles: '**/*.apk'
+      apkFiles: 'cod/superapk.apk'
       apksign: false
