@@ -23,6 +23,11 @@ import java.util.ArrayList
 import org.osmdroid.config.Configuration.*
 import org.osmdroid.views.overlay.Marker
 
+import org.osmdroid.util.BoundingBox
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
+import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
+
+import org.osmdroid.views.overlay.compass.CompassOverlay
 
 class MapFragment : Fragment(){
 
@@ -42,24 +47,11 @@ class MapFragment : Fragment(){
         })
 
         Configuration.getInstance().load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
-        println(Configuration.getInstance().getOsmdroidBasePath(requireContext()))
-
         Configuration.getInstance().isDebugMapView = true
         Configuration.getInstance().isDebugMode = true
         Configuration.getInstance().isDebugTileProviders = true
 
-        try {
-            val inputStream: InputStream = requireContext().assets.open("bemowo.zip")
-            val size: Int = inputStream.available()
-            val buffer = ByteArray(size)
-            inputStream.read(buffer)
-            val file = File(Configuration.getInstance().getOsmdroidBasePath(requireContext()), "bemowo.zip")
-            FileOutputStream(file).use {
-                it.write(buffer)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        prepareMapFile("bemowo.zip")
 
         binding.map.setUseDataConnection(false)
         binding.map.setTileSource(
@@ -71,21 +63,8 @@ class MapFragment : Fragment(){
             ".png",
             arrayOf(""))
         )
-        binding.map.controller.setZoom(13.0)
-        binding.map.minZoomLevel = 13.0
-        binding.map.maxZoomLevel = 18.0
-//        binding.map.projection.fromPixels(0, 0)
-//        binding.map.projection.fromPixels(binding.map.width, binding.map.height)
-        binding.map.controller.setCenter(GeoPoint(52.25, 20.95))
-//        binding.map.boundingBox.set(
-//            binding.map.projection.fromPixels(0, 0).latitude,
-//            binding.map.projection.fromPixels(binding.map.width, binding.map.height).longitude,
-//            binding.map.projection.fromPixels(binding.map.width, binding.map.height).latitude,
-//            binding.map.projection.fromPixels(0, 0).longitude
-//        )
-//        println(binding.map.projection.fromPixels(0, 0).latitude)
-//        println(binding.map.projection.fromPixels(binding.map.width, binding.map.height).longitude)
 
+        setMapOverlays()
 
         return view
     }
@@ -130,7 +109,7 @@ class MapFragment : Fragment(){
     }
     private fun currentLocationMarker(){
        val currentPosMarker = Marker(binding.map)
-        
+
         binding.map.overlays.forEach {
             if (it is Marker && it.id == "myLocation") {
                 binding.map.overlays.remove(it)
@@ -146,5 +125,52 @@ class MapFragment : Fragment(){
 
         binding.map.invalidate();
 
+    }
+
+    private fun setMapOverlays() {
+        binding.map.controller.setZoom(13.0)
+        binding.map.minZoomLevel = 13.0
+        binding.map.maxZoomLevel = 18.0
+
+        //ROTACJA MAPY
+        //val rotationGestureOverlay = RotationGestureOverlay(binding.map);
+        //rotationGestureOverlay.isEnabled
+        //binding.map.overlays.add(rotationGestureOverlay);
+
+        binding.map.setMultiTouchControls(true);
+
+        //PUNKT WIDOKU MAPY
+        binding.map.controller.setCenter(GeoPoint(52.25, 20.95))
+
+        //KOMPAS
+        val compassOverlay = CompassOverlay(requireContext(), InternalCompassOrientationProvider(requireContext()), binding.map)
+        compassOverlay.enableCompass()
+        binding.map.overlays.add(compassOverlay)
+
+        binding.map.setScrollableAreaLimitDouble(
+            BoundingBox(
+                52.3,
+                21.05,
+                52.2,
+                20.825
+            )
+        )
+//        println(binding.map.projection.fromPixels(0, 0).latitude)
+//        println(binding.map.projection.fromPixels(binding.map.width, binding.map.height).longitude)
+    }
+
+    private fun prepareMapFile(fileName: String) {
+        try {
+            val inputStream: InputStream = requireContext().assets.open(fileName)
+            val size: Int = inputStream.available()
+            val buffer = ByteArray(size)
+            inputStream.read(buffer)
+            val file = File(Configuration.getInstance().getOsmdroidBasePath(requireContext()), fileName)
+            FileOutputStream(file).use {
+                it.write(buffer)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }
