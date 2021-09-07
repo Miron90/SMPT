@@ -19,22 +19,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
+import com.example.smpt.databinding.ActivitySecondBinding
 import com.example.smpt.ui.services.ForegroundOnlyLocationService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import org.osmdroid.util.GeoPoint
 
 class MainActivity : AppCompatActivity(){
+    private val binding: ActivitySecondBinding by lazy {
+        ActivitySecondBinding.inflate(layoutInflater)
+    }
     private val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE: Int = 34
     private val viewModel: MainViewModel by viewModels()
 
@@ -44,7 +47,10 @@ class MainActivity : AppCompatActivity(){
 
     private lateinit var foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver
 
-    private lateinit var outputLocationText: String
+    var currentLocation = MutableLiveData<GeoPoint>()
+
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
 
     private val foregroundServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -200,8 +206,8 @@ class MainActivity : AppCompatActivity(){
             )
 
             if (location != null) {
-                outputLocationText = location.toString()
-                Log.d("Location", outputLocationText)
+                currentLocation.postValue(GeoPoint(location.latitude, location.longitude))
+               // Log.d("Location", outputLocationText)
             }
         }
     }
