@@ -2,6 +2,7 @@ package com.example.smpt.ui.map
 
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.smpt.databinding.FragmentMapBinding
 import com.example.smpt.ui.main.MainActivity
+import com.example.smpt.ui.services.ForegroundOnlyLocationService
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
@@ -19,7 +21,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.ArrayList
 import org.osmdroid.config.Configuration.*
-
+import org.osmdroid.views.overlay.Marker
 
 
 class MapFragment : Fragment(){
@@ -27,10 +29,17 @@ class MapFragment : Fragment(){
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1;
+    lateinit var currentLocation: GeoPoint
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        //observer od markera aktualnej lokalizacji (LiveData)
+        (activity as MainActivity).currentLocation.observe(viewLifecycleOwner, {
+            currentLocation = it
+            currentLocationMarker()
+        })
 
         Configuration.getInstance().load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
         println(Configuration.getInstance().getOsmdroidBasePath(requireContext()))
@@ -77,6 +86,7 @@ class MapFragment : Fragment(){
 //        println(binding.map.projection.fromPixels(0, 0).latitude)
 //        println(binding.map.projection.fromPixels(binding.map.width, binding.map.height).longitude)
 
+
         return view
     }
 
@@ -117,5 +127,24 @@ class MapFragment : Fragment(){
                 REQUEST_PERMISSIONS_REQUEST_CODE
             );
         }
+    }
+    private fun currentLocationMarker(){
+       val currentPosMarker = Marker(binding.map)
+        
+        binding.map.overlays.forEach {
+            if (it is Marker && it.id == "myLocation") {
+                binding.map.overlays.remove(it)
+            }
+        }
+        binding.map.invalidate();
+
+        currentPosMarker.id = "myLocation"
+        currentPosMarker.position = currentLocation
+        currentPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        currentPosMarker.title = "My location";
+        binding.map.overlays.add(currentPosMarker)
+
+        binding.map.invalidate();
+
     }
 }
