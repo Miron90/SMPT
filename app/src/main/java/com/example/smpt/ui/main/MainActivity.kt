@@ -23,6 +23,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
+import com.example.smpt.ui.ApiInterface
+import com.example.smpt.ui.Localization
 import com.example.smpt.databinding.ActivitySecondBinding
 import com.example.smpt.ui.services.ForegroundOnlyLocationService
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -32,6 +34,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.math.log
 import org.osmdroid.util.GeoPoint
 
 class MainActivity : AppCompatActivity(){
@@ -85,6 +91,24 @@ class MainActivity : AppCompatActivity(){
                 Log.d("Location","request")
                 requestForegroundPermissions()
             }
+        }
+
+        findViewById<Button>(R.id.sendData).setOnClickListener(){
+            Log.d("API","sending data")
+            val apiInterface = ApiInterface.create().getLocalization()
+            apiInterface.enqueue(object: Callback<Array<String>>{
+                override fun onResponse(
+                    call: Call<Array<String>>,
+                    response: Response<Array<String>>
+                ) {
+                    if(response?.body() != null) Log.d("API", "work"+response.body()!!.get(0))
+                    Log.d("API", "work"+response)
+                }
+                override fun onFailure(call: Call<Array<String>>?, t: Throwable?) {
+                    Log.d("API","Error"+t.toString())
+                }
+            })
+            Log.d("API",apiInterface.toString())
         }
 
     }
