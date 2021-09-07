@@ -7,4 +7,9 @@
     <string name="login__hint__password">Hasło</string>
     <string name="main_map_description">View representing map</string>
     <string name="main_map_button_text">Show Troops</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="permission_rationale">Location permission needed for core functionality</string>
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
