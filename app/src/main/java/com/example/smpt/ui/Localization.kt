@@ -1,3 +1,7 @@
 package com.example.smpt.ui
 
-data class Localization (var value: Array<String>)
+data class Localizationx (var value: Array<String>)
+
+data class Localization (var latitude: Double, var longtitude: Double, var username: String)
+
+data class LocalizationResponse (var message: String)

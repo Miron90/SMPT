@@ -6,7 +6,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
@@ -25,6 +24,7 @@ import com.example.smpt.BuildConfig
 import com.example.smpt.R
 import com.example.smpt.ui.ApiInterface
 import com.example.smpt.ui.Localization
+import com.example.smpt.ui.LocalizationResponse
 import com.example.smpt.databinding.ActivitySecondBinding
 import com.example.smpt.ui.services.ForegroundOnlyLocationService
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -34,9 +34,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.math.log
 import org.osmdroid.util.GeoPoint
 
@@ -95,6 +97,23 @@ class MainActivity : AppCompatActivity(){
 
         findViewById<Button>(R.id.sendData).setOnClickListener(){
             Log.d("API","sending data")
+            // Create JSON using JSONObject
+            var loc = Localization(12.1, 56.1,"Andrew")
+            val apiInterfacesend = ApiInterface.create().sendLocalization(loc)
+            apiInterfacesend.enqueue(object: Callback<JSONObject>{
+                override fun onResponse(
+                    call: Call<JSONObject>,
+                    response: Response<JSONObject>
+                ) {
+                    if(response?.body() != null) Log.d("API", "work"+response.message())
+                    Log.d("API", "work"+response.message())
+                }
+                override fun onFailure(call: Call<JSONObject>?, t: Throwable?) {
+                    Log.d("API","Error"+t.toString())
+                }
+            })
+
+
             val apiInterface = ApiInterface.create().getLocalization()
             apiInterface.enqueue(object: Callback<Array<String>>{
                 override fun onResponse(
