@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(){
         findViewById<Button>(R.id.sendData).setOnClickListener(){
             Log.d("API","sending data")
             // Create JSON using JSONObject
-            var loc = Localization(12.1, 56.1,"Andrew")
+            var loc = Localization(latitude, longitude,"Andrew")
             val apiInterfacesend = ApiInterface.create().sendLocalization(loc)
             apiInterfacesend.enqueue(object: Callback<JSONObject>{
                 override fun onResponse(
@@ -251,6 +251,9 @@ class MainActivity : AppCompatActivity(){
             if (location != null) {
                 currentLocation.postValue(GeoPoint(location.latitude, location.longitude))
                // Log.d("Location", outputLocationText)
+                latitude = location.latitude
+                longitude = location.longitude
+                Log.d("Location", latitude.toString()+" "+latitude)
             }
         }
     }
