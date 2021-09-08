@@ -6,35 +6,33 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.preference.PreferenceManager
 import android.provider.Settings
-import android.telecom.TelecomManager.EXTRA_LOCATION
 import android.util.Log
-import android.widget.Button
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
+import com.example.smpt.ui.ApiInterface
+import com.example.smpt.ui.Localization
 import com.example.smpt.databinding.ActivitySecondBinding
+import com.example.smpt.ui.Constants
 import com.example.smpt.ui.services.ForegroundOnlyLocationService
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.math.log
 import org.osmdroid.util.GeoPoint
 
 class MainActivity : AppCompatActivity(){
+    private lateinit var sharedPreferences: SharedPreferences
     private val binding: ActivitySecondBinding by lazy {
         ActivitySecondBinding.inflate(layoutInflater)
     }
@@ -58,6 +56,14 @@ class MainActivity : AppCompatActivity(){
             val binder = service as ForegroundOnlyLocationService.LocalBinder
             foregroundLocationService = binder.service
             foregroundLocationServiceBound = true
+            if(foregroundPermissionApproved()){
+                Log.d("Location", foregroundLocationService.toString())
+                foregroundLocationService?.subscribeToLocationUpdates()
+                    ?: Log.d("Location","Service not bound")
+            }else{
+                Log.d("Location","request")
+                requestForegroundPermissions()
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -73,21 +79,29 @@ class MainActivity : AppCompatActivity(){
 
         foregroundBroadcastReceiver = ForegroundOnlyBroadcastReceiver()
 
+        sharedPreferences=  PreferenceManager.getDefaultSharedPreferences(this)
 
 
-        findViewById<Button>(R.id.showTargetsButton).setOnClickListener {
+
             Log.d("Location",foregroundPermissionApproved().toString())
             if(foregroundPermissionApproved()){
                 Log.d("Location", foregroundLocationService.toString())
-                foregroundLocationService?.subscribeToLocationUpdates()
-                    ?: Log.d("Location","Service not bound")
+//                foregroundLocationService?.subscribeToLocationUpdates()
+//                    ?: Log.d("Location","Service not bound")
             }else{
                 Log.d("Location","request")
                 requestForegroundPermissions()
             }
-        }
+
+
+
+
+
 
     }
+
+
+
     override fun onStart() {
         super.onStart()
 
@@ -206,7 +220,45 @@ class MainActivity : AppCompatActivity(){
             )
 
             if (location != null) {
+                latitude = location.latitude
+                longitude = location.longitude
                 currentLocation.postValue(GeoPoint(location.latitude, location.longitude))
+                Log.d("API","sending data")
+                // Create JSON using JSONObject
+                var loc = Localization(latitude, longitude,sharedPreferences.getString(Constants().USERNAME, "noSharedPref"))
+                val apiInterfacesend = ApiInterface.create().sendLocalization(loc)
+                apiInterfacesend.enqueue(object: Callback<String>{
+                    override fun onResponse(
+                        call: Call<String>,
+                        response: Response<String>
+                    ) {
+                        if(response?.body() != null) Log.d("API", "work"+response.message())
+                        Log.d("API", "work"+response.message())
+                    }
+                    override fun onFailure(call: Call<String>?, t: Throwable?) {
+                        Log.d("API","Error"+t.toString())
+                    }
+                })
+                val apiInterface = ApiInterface.create().getLocalization()
+                apiInterface.enqueue(object: Callback<Array<Localization>>{
+                    override fun onResponse(
+                        call: Call<Array<Localization>>,
+                        response: Response<Array<Localization>>
+                    ) {
+                        if(response?.body() != null) {
+                            for(loc in response.body()!!) {
+                                Log.d("API", "work" + loc)
+                                //TODO zrob cos z punktami
+                            }
+
+
+                        }
+                    }
+                    override fun onFailure(call: Call<Array<Localization>>?, t: Throwable?) {
+                        Log.d("API","Error"+t.toString())
+                    }
+                })
+                Log.d("API",apiInterface.toString())
                // Log.d("Location", outputLocationText)
             }
         }
