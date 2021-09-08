@@ -45,7 +45,6 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Polygon
 
 class MainActivity : AppCompatActivity(), MapEventsReceiver {
-class MainActivity : AppCompatActivity(){
     private lateinit var sharedPreferences: SharedPreferences
     private val binding: ActivitySecondBinding by lazy {
         ActivitySecondBinding.inflate(layoutInflater)
@@ -62,6 +61,11 @@ class MainActivity : AppCompatActivity(){
     var currentLocation = MutableLiveData<GeoPoint>()
     var tapLocation = MutableLiveData<GeoPoint>()
 
+
+    var userLocations = MutableLiveData<Array<Localization>>()
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+
     var mapEventsOverlay = MapEventsOverlay(this, this)
 
     private val foregroundServiceConnection = object : ServiceConnection {
@@ -70,12 +74,12 @@ class MainActivity : AppCompatActivity(){
             val binder = service as ForegroundOnlyLocationService.LocalBinder
             foregroundLocationService = binder.service
             foregroundLocationServiceBound = true
-            if(foregroundPermissionApproved()){
+            if (foregroundPermissionApproved()) {
                 Log.d("Location", foregroundLocationService.toString())
                 foregroundLocationService?.subscribeToLocationUpdates()
-                    ?: Log.d("Location","Service not bound")
-            }else{
-                Log.d("Location","request")
+                    ?: Log.d("Location", "Service not bound")
+            } else {
+                Log.d("Location", "request")
                 requestForegroundPermissions()
             }
         }
@@ -93,230 +97,243 @@ class MainActivity : AppCompatActivity(){
 
         foregroundBroadcastReceiver = ForegroundOnlyBroadcastReceiver()
 
-        findViewById<Button>(R.id.showTargetsButton).setOnClickListener {
             Log.d("Location", foregroundPermissionApproved().toString())
             if (foregroundPermissionApproved()) {
-        sharedPreferences=  PreferenceManager.getDefaultSharedPreferences(this)
+                sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
 
 
-            Log.d("Location",foregroundPermissionApproved().toString())
-            if(foregroundPermissionApproved()){
-                Log.d("Location", foregroundLocationService.toString())
-                foregroundLocationService?.subscribeToLocationUpdates()
-                    ?: Log.d("Location", "Service not bound")
-            } else {
-                Log.d("Location", "request")
-//                foregroundLocationService?.subscribeToLocationUpdates()
-//                    ?: Log.d("Location","Service not bound")
-            }else{
-                Log.d("Location","request")
-                requestForegroundPermissions()
+                Log.d("Location", foregroundPermissionApproved().toString())
+                if (foregroundPermissionApproved()) {
+                    Log.d("Location", foregroundLocationService.toString())
+//                    foregroundLocationService?.subscribeToLocationUpdates()
+//                        ?: Log.d("Location", "Service not bound")
+                } else {
+                    Log.d("Location", "request")
+                    requestForegroundPermissions()
+                }
+
+
             }
 
-
-
-
-
-
     }
 
 
 
 
-    override fun onStart() {
-        super.onStart()
+            override fun onStart() {
+                super.onStart()
 
-        val serviceIntent = Intent(this, ForegroundOnlyLocationService::class.java)
-        bindService(serviceIntent, foregroundServiceConnection, Context.BIND_AUTO_CREATE)
-    }
+                val serviceIntent = Intent(this, ForegroundOnlyLocationService::class.java)
+                bindService(serviceIntent, foregroundServiceConnection, Context.BIND_AUTO_CREATE)
+            }
 
-    override fun onResume() {
-        super.onResume()
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-            foregroundBroadcastReceiver,
-            IntentFilter(
-                ForegroundOnlyLocationService.ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST
-            )
-        )
-    }
-
-    override fun onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(
-            foregroundBroadcastReceiver
-        )
-        super.onPause()
-    }
-
-    override fun onStop() {
-        if (foregroundLocationServiceBound) {
-            unbindService(foregroundServiceConnection)
-            foregroundLocationServiceBound = false
-        }
-        foregroundLocationService?.unsubscribeToLocationUpdates()
-        super.onStop()
-    }
-
-    private fun foregroundPermissionApproved(): Boolean {
-        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-    }
-
-    private fun requestForegroundPermissions() {
-        val provideRationale = foregroundPermissionApproved()
-
-        // If the user denied a previous request, but didn't check "Don't ask again", provide
-        // additional rationale.
-        if (provideRationale) {
-            Snackbar.make(
-                findViewById(R.id.activity_main),
-                R.string.permission_rationale,
-                Snackbar.LENGTH_LONG
-            ).setAction("OK") {
-                // Request permission
-                ActivityCompat.requestPermissions(
-                    this@MainActivity,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+            override fun onResume() {
+                super.onResume()
+                LocalBroadcastManager.getInstance(this).registerReceiver(
+                    foregroundBroadcastReceiver,
+                    IntentFilter(
+                        ForegroundOnlyLocationService.ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST
+                    )
                 )
             }
-                .show()
-        } else {
-            Log.d("Location", "Request foreground only permission")
-            ActivityCompat.requestPermissions(
-                this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
-            )
-        }
-    }
 
-    @SuppressLint("MissingSuperCall")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        Log.d("Location", "onRequestPermissionResult")
+            override fun onPause() {
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(
+                    foregroundBroadcastReceiver
+                )
+                super.onPause()
+            }
 
-        when (requestCode) {
-            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE -> when {
-                grantResults.isEmpty() ->
-                    // If user interaction was interrupted, the permission request
-                    // is cancelled and you receive empty arrays.
-                    Log.d("Location", "User interaction was cancelled.")
-                grantResults[0] == PackageManager.PERMISSION_GRANTED ->
-                    // Permission was granted.
-                    foregroundLocationService?.subscribeToLocationUpdates()
-                else -> {
-                    // Permission denied.
+            override fun onStop() {
+                if (foregroundLocationServiceBound) {
+                    unbindService(foregroundServiceConnection)
+                    foregroundLocationServiceBound = false
+                }
+                foregroundLocationService?.unsubscribeToLocationUpdates()
+                super.onStop()
+            }
 
+            private fun foregroundPermissionApproved(): Boolean {
+                return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            }
+
+            private fun requestForegroundPermissions() {
+                val provideRationale = foregroundPermissionApproved()
+
+                // If the user denied a previous request, but didn't check "Don't ask again", provide
+                // additional rationale.
+                if (provideRationale) {
                     Snackbar.make(
                         findViewById(R.id.activity_main),
-                        R.string.permission_denied_explanation,
+                        R.string.permission_rationale,
                         Snackbar.LENGTH_LONG
-                    )
-                        .setAction("Settings") {
-                            // Build intent that displays the App settings screen.
-                            val intent = Intent()
-                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            val uri = Uri.fromParts(
-                                "package",
-                                BuildConfig.APPLICATION_ID,
-                                null
-                            )
-                            intent.data = uri
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)
-                        }
+                    ).setAction("OK") {
+                        // Request permission
+                        ActivityCompat.requestPermissions(
+                            this@MainActivity,
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+                        )
+                    }
                         .show()
+                } else {
+                    Log.d("Location", "Request foreground only permission")
+                    ActivityCompat.requestPermissions(
+                        this@MainActivity,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+                    )
                 }
             }
-        }
-    }
 
-    private inner class ForegroundOnlyBroadcastReceiver : BroadcastReceiver() {
+            @SuppressLint("MissingSuperCall")
+            override fun onRequestPermissionsResult(
+                requestCode: Int,
+                permissions: Array<String>,
+                grantResults: IntArray
+            ) {
+                Log.d("Location", "onRequestPermissionResult")
 
-        override fun onReceive(context: Context, intent: Intent) {
-            val location = intent.getParcelableExtra<Location>(
-                ForegroundOnlyLocationService.EXTRA_LOCATION
-            )
+                when (requestCode) {
+                    REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE -> when {
+                        grantResults.isEmpty() ->
+                            // If user interaction was interrupted, the permission request
+                            // is cancelled and you receive empty arrays.
+                            Log.d("Location", "User interaction was cancelled.")
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED ->
+                            // Permission was granted.
+                            foregroundLocationService?.subscribeToLocationUpdates()
+                        else -> {
+                            // Permission denied.
 
-            if (location != null) {
-                latitude = location.latitude
-                longitude = location.longitude
-                currentLocation.postValue(GeoPoint(location.latitude, location.longitude))
-                // Log.d("Location", outputLocationText)
-                Log.d("API","sending data")
-                // Create JSON using JSONObject
-                var loc = Localization(latitude, longitude,sharedPreferences.getString(Constants().USERNAME, "noSharedPref"))
-                val apiInterfacesend = ApiInterface.create().sendLocalization(loc)
-                apiInterfacesend.enqueue(object: Callback<String>{
-                    override fun onResponse(
-                        call: Call<String>,
-                        response: Response<String>
-                    ) {
-                        if(response?.body() != null) Log.d("API", "work"+response.message())
-                        Log.d("API", "work"+response.message())
-                    }
-                    override fun onFailure(call: Call<String>?, t: Throwable?) {
-                        Log.d("API","Error"+t.toString())
-                    }
-                })
-                val apiInterface = ApiInterface.create().getLocalization()
-                apiInterface.enqueue(object: Callback<Array<Localization>>{
-                    override fun onResponse(
-                        call: Call<Array<Localization>>,
-                        response: Response<Array<Localization>>
-                    ) {
-                        if(response?.body() != null) {
-                            for(loc in response.body()!!) {
-                                Log.d("API", "work" + loc)
-                                //TODO zrob cos z punktami
-                            }
-
-
+                            Snackbar.make(
+                                findViewById(R.id.activity_main),
+                                R.string.permission_denied_explanation,
+                                Snackbar.LENGTH_LONG
+                            )
+                                .setAction("Settings") {
+                                    // Build intent that displays the App settings screen.
+                                    val intent = Intent()
+                                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                                    val uri = Uri.fromParts(
+                                        "package",
+                                        BuildConfig.APPLICATION_ID,
+                                        null
+                                    )
+                                    intent.data = uri
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    startActivity(intent)
+                                }
+                                .show()
                         }
                     }
-                    override fun onFailure(call: Call<Array<Localization>>?, t: Throwable?) {
-                        Log.d("API","Error"+t.toString())
-                    }
-                })
-                Log.d("API",apiInterface.toString())
-               // Log.d("Location", outputLocationText)
+                }
             }
+            //funkcja od interfejsu MapRecievera
+            override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+                Toast.makeText(this, "Tapped", Toast.LENGTH_SHORT).show()
+                //tapLocation.postValue(GeoPoint(p))
+                return true
+            }
+
+            //funkcja od interfejsu MapRecievera
+            override fun longPressHelper(p: GeoPoint?): Boolean {
+                if (p != null) {
+
+                    tapLocation.postValue(GeoPoint(p))
+                    Toast.makeText(
+                        this,
+                        "Tap on (" + p.latitude + "," + p.longitude + ")",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                };
+                return false
+            }
+
+            private inner class ForegroundOnlyBroadcastReceiver : BroadcastReceiver() {
+
+                override fun onReceive(context: Context, intent: Intent) {
+                    val location = intent.getParcelableExtra<Location>(
+                        ForegroundOnlyLocationService.EXTRA_LOCATION
+                    )
+
+                    if (location != null) {
+                        latitude = location.latitude
+                        longitude = location.longitude
+                        currentLocation.postValue(GeoPoint(location.latitude, location.longitude))
+                        // Log.d("Location", outputLocationText)
+                        Log.d("API", "sending data")
+                        // Create JSON using JSONObject
+                        var loc = Localization(
+                            latitude,
+                            longitude,
+                            sharedPreferences.getString(Constants().USERNAME, "noSharedPref")
+                        )
+
+
+                        val apiInterfacesend = ApiInterface.create().sendLocalization(loc)
+                        apiInterfacesend.enqueue(object : Callback<String> {
+                            override fun onResponse(
+                                call: Call<String>,
+                                response: Response<String>
+                            ) {
+                                if (response?.body() != null) Log.d(
+                                    "API",
+                                    "work" + response.message()
+                                )
+                                Log.d("API", "work" + response.message())
+                            }
+
+                            override fun onFailure(call: Call<String>?, t: Throwable?) {
+                                Log.d("API", "Error" + t.toString())
+                            }
+                        })
+                        val apiInterface = ApiInterface.create().getLocalization()
+                        apiInterface.enqueue(object : Callback<Array<Localization>> {
+                            override fun onResponse(
+                                call: Call<Array<Localization>>,
+                                response: Response<Array<Localization>>
+                            ) {
+                                if (response?.body() != null) {
+                                    userLocations.postValue(response.body()!!)
+                                    for (loc in response.body()!!) {
+                                        Log.d("API", "work" + loc)
+                                        //TODO zrob cos z punktami
+                                        //sharedPreferences.getString(Constants().USERNAME, "noSharedPref")
+                                    }
+
+
+                                }
+                            }
+
+                            override fun onFailure(
+                                call: Call<Array<Localization>>?,
+                                t: Throwable?
+                            ) {
+                                Log.d("API", "Error" + t.toString())
+                            }
+                        })
+                        Log.d("API", apiInterface.toString())
+                        // Log.d("Location", outputLocationText)
+                    }
+                }
+            }
+
+            fun Location?.toText(): String {
+                return if (this != null) {
+                    "($latitude, $longitude)"
+                } else {
+                    "Unknown location"
+                }
+            }
+
+
         }
-    }
 
-    fun Location?.toText(): String {
-        return if (this != null) {
-            "($latitude, $longitude)"
-        } else {
-            "Unknown location"
-        }
-    }
 
-    //funkcja od interfejsu MapRecievera
-    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        Toast.makeText(this, "Tapped", Toast.LENGTH_SHORT).show()
-        //tapLocation.postValue(GeoPoint(p))
-        return true
-    }
 
-    //funkcja od interfejsu MapRecievera
-    override fun longPressHelper(p: GeoPoint?): Boolean {
-        if (p != null) {
 
-            tapLocation.postValue(GeoPoint(p))
-            Toast.makeText(
-                this,
-                "Tap on (" + p.latitude + "," + p.longitude + ")",
-                Toast.LENGTH_SHORT
-            ).show()
-        };
-        return false
-    }
-
-}

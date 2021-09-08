@@ -35,8 +35,10 @@ import org.osmdroid.views.overlay.Polygon
 import android.app.Activity
 import java.lang.ClassCastException
 import android.R
+import android.content.SharedPreferences
 import android.graphics.Color
 import androidx.fragment.app.FragmentManager
+import com.example.smpt.ui.Constants
 import com.google.android.gms.dynamic.SupportFragmentWrapper
 
 
@@ -48,14 +50,32 @@ class MapFragment : Fragment(){
     lateinit var currentLocation: GeoPoint
     lateinit var tapLocation: GeoPoint
 
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(requireContext())
         //observer od markera aktualnej lokalizacji (LiveData)
-        (activity as MainActivity).currentLocation.observe(viewLifecycleOwner, {
-            currentLocation = it
-            currentLocationMarker()
+//        (activity as MainActivity).currentLocation.observe(viewLifecycleOwner, {
+//            currentLocation = it
+//            currentLocationMarker()
+//        })
+
+        //observer od m
+        (activity as MainActivity).userLocations.observe(viewLifecycleOwner, {
+            for(loc in it){
+                currentLocation=GeoPoint(loc.latitude,loc.longtitude)
+                if(loc.name.equals( sharedPreferences.getString(Constants().USERNAME, "noSharedPref"))){
+                    drawLocationMarker("Green", loc.name!!)
+                }
+                else{
+                    drawLocationMarker("Blue", loc.name!!)
+                }
+
+            }
+//            currentLocationMarker()
         })
 
         //observer od markera klikniecia (LiveData)
@@ -89,6 +109,37 @@ class MapFragment : Fragment(){
 
 
         return view
+    }
+
+    private fun drawLocationMarker(s: String, name: String) {
+        val currentPosMarker = Marker(binding.map)
+        binding.map.overlays.forEach {
+            if (it is Marker && it.id == name) {
+                binding.map.overlays.remove(it)
+            }
+        }
+        binding.map.invalidate();
+
+        currentPosMarker.id = name
+        currentPosMarker.position = currentLocation
+        Log.d("position",name)
+        if(s.equals("Green")) {
+
+            currentPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            currentPosMarker.title = name;
+            binding.map.overlays.add(currentPosMarker)
+
+            binding.map.invalidate();
+        }else if (s.equals("Blue")){
+
+            //ikonka do zmiany
+            currentPosMarker.setIcon(getResources().getDrawable(R.drawable.btn_plus));
+            currentPosMarker.setAnchor(Marker.ANCHOR_TOP, Marker.ANCHOR_RIGHT)
+            currentPosMarker.title = name
+            binding.map.overlays.add(currentPosMarker)
+
+            binding.map.invalidate();
+        }
     }
 
     override fun onResume() {
