@@ -6,87 +6,77 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.smpt.databinding.FragmentMapBinding
 import com.example.smpt.ui.main.MainActivity
-import com.example.smpt.ui.services.ForegroundOnlyLocationService
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.ArrayList
-import org.osmdroid.config.Configuration.*
-import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.views.overlay.Marker
-
 import org.osmdroid.util.BoundingBox
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
-
 import org.osmdroid.views.overlay.compass.CompassOverlay
-import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Polygon
-import android.app.Activity
-import java.lang.ClassCastException
 import android.R
 import android.content.SharedPreferences
 import android.graphics.Color
-import androidx.fragment.app.FragmentManager
 import com.example.smpt.ui.Constants
-import com.google.android.gms.dynamic.SupportFragmentWrapper
 
 
-class MapFragment : Fragment(){
+class MapFragment : Fragment() {
 
     private var _binding: FragmentMapBinding? = null
-    val binding get() = _binding!!
+    private val binding get() = _binding!!
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     lateinit var currentLocation: GeoPoint
     lateinit var tapLocation: GeoPoint
 
     private lateinit var sharedPreferences: SharedPreferences
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(requireContext())
-        //observer od markera aktualnej lokalizacji (LiveData)
-//        (activity as MainActivity).currentLocation.observe(viewLifecycleOwner, {
-//            currentLocation = it
-//            currentLocationMarker()
-//        })
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         //observer od m
         (activity as MainActivity).userLocations.observe(viewLifecycleOwner, {
-            for(loc in it){
-                currentLocation=GeoPoint(loc.latitude,loc.longtitude)
-                if(loc.name.equals( sharedPreferences.getString(Constants().USERNAME, "noSharedPref"))){
+            for (loc in it) {
+                currentLocation = GeoPoint(loc.latitude, loc.longtitude)
+                if (loc.name.equals(
+                        sharedPreferences.getString(
+                            Constants().USERNAME,
+                            "noSharedPref"
+                        )
+                    )
+                ) {
                     drawLocationMarker("Green", loc.name!!)
-                }
-                else{
+                } else {
                     drawLocationMarker("Blue", loc.name!!)
                 }
 
             }
-//            currentLocationMarker()
         })
 
         //observer od markera klikniecia (LiveData)
         (activity as MainActivity).tapLocation.observe(viewLifecycleOwner, {
             tapLocation = it
-
             //wywolywanie testowej funkcji rysowania
             drawPolylineTest()
         })
 
-        Configuration.getInstance().load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
+        Configuration.getInstance()
+            .load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
         Configuration.getInstance().isDebugMapView = true
         Configuration.getInstance().isDebugMode = true
         Configuration.getInstance().isDebugTileProviders = true
@@ -96,18 +86,15 @@ class MapFragment : Fragment(){
         binding.map.setUseDataConnection(false)
         binding.map.setTileSource(
             XYTileSource(
-            "4uMaps",
-            13,
-            15,
-            256,
-            ".png",
-            arrayOf(""))
+                "4uMaps",
+                13,
+                15,
+                256,
+                ".png",
+                arrayOf("")
+            )
         )
-
         setMapOverlays()
-
-
-
         return view
     }
 
@@ -122,22 +109,21 @@ class MapFragment : Fragment(){
 
         currentPosMarker.id = name
         currentPosMarker.position = currentLocation
-        Log.d("position",name)
-        if(s.equals("Green")) {
+        Log.d("position", name)
+        if (s.equals("Green")) {
 
             currentPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             currentPosMarker.title = name;
             binding.map.overlays.add(currentPosMarker)
-
             binding.map.invalidate();
-        }else if (s.equals("Blue")){
+
+        } else if (s.equals("Blue")) {
 
             //ikonka do zmiany
             currentPosMarker.setIcon(getResources().getDrawable(R.drawable.btn_plus));
             currentPosMarker.setAnchor(Marker.ANCHOR_TOP, Marker.ANCHOR_RIGHT)
             currentPosMarker.title = name
             binding.map.overlays.add(currentPosMarker)
-
             binding.map.invalidate();
         }
     }
@@ -180,35 +166,17 @@ class MapFragment : Fragment(){
             );
         }
     }
-    private fun currentLocationMarker(){
-       val currentPosMarker = Marker(binding.map)
-
-        binding.map.overlays.forEach {
-            if (it is Marker && it.id == "myLocation") {
-                binding.map.overlays.remove(it)
-            }
-        }
-        binding.map.invalidate();
-
-        currentPosMarker.id = "myLocation"
-        currentPosMarker.position = currentLocation
-        currentPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        currentPosMarker.title = "My location";
-        binding.map.overlays.add(currentPosMarker)
-
-        binding.map.invalidate();
-
-    }
 
     //Dodawanie rysunku (fun testowa)
-    fun drawPolylineTest(){
+    private fun drawPolylineTest() {
         val circle = Polygon(binding.map)
-        circle.points = Polygon.pointsAsCircle(tapLocation, 100.0)
+        circle.points = Polygon.pointsAsCircle(tapLocation, 1000.0)
         circle.setFillColor(0x12121212);
         circle.setStrokeColor(Color.RED);
         circle.setStrokeWidth(2F);
-        circle.title = ("Center of circle x: " + tapLocation.latitude + " y: " + tapLocation.longitude)
-        binding.map.getOverlays().add(circle);
+        circle.title =
+            ("Center of circle x: " + tapLocation.latitude + " y: " + tapLocation.longitude)
+        binding.map.overlays.add(circle);
         binding.map.invalidate();
     }
 
@@ -228,10 +196,13 @@ class MapFragment : Fragment(){
         binding.map.controller.setCenter(GeoPoint(52.25, 20.95))
 
         //KOMPAS
-        val compassOverlay = CompassOverlay(requireContext(), InternalCompassOrientationProvider(requireContext()), binding.map)
+        val compassOverlay = CompassOverlay(
+            requireContext(),
+            InternalCompassOrientationProvider(requireContext()),
+            binding.map
+        )
         compassOverlay.enableCompass()
         binding.map.overlays.add(compassOverlay)
-
         binding.map.setScrollableAreaLimitDouble(
             BoundingBox(
                 52.3,
@@ -240,9 +211,7 @@ class MapFragment : Fragment(){
                 20.825
             )
         )
-        binding.map.overlays.add(0, (activity as MainActivity).mapEventsOverlay);
-//        println(binding.map.projection.fromPixels(0, 0).latitude)
-//        println(binding.map.projection.fromPixels(binding.map.width, binding.map.height).longitude)
+        binding.map.overlays.add(0, (activity as MainActivity).mapEventsOverlay)
     }
 
     private fun prepareMapFile(fileName: String) {
@@ -251,7 +220,8 @@ class MapFragment : Fragment(){
             val size: Int = inputStream.available()
             val buffer = ByteArray(size)
             inputStream.read(buffer)
-            val file = File(Configuration.getInstance().getOsmdroidBasePath(requireContext()), fileName)
+            val file =
+                File(Configuration.getInstance().getOsmdroidBasePath(requireContext()), fileName)
             FileOutputStream(file).use {
                 it.write(buffer)
             }
@@ -259,6 +229,4 @@ class MapFragment : Fragment(){
             e.printStackTrace()
         }
     }
-
-
 }
