@@ -18,11 +18,11 @@ import com.google.gson.Gson
 interface ApiInterface {
 
     @GET("api/map")
-    fun getLocalization() : Call<Array<String>>
+    fun getLocalization() : Call<Array<Localization>>
 
 
     @POST("api/map")
-    fun sendLocalization(@Body localization: Localization): Call<JSONObject>
+    fun sendLocalization(@Body localization: Localization): Call<String>
 
     companion object {
 
