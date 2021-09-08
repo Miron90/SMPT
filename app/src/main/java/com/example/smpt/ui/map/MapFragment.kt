@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.smpt.databinding.FragmentMapBinding
@@ -21,6 +22,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.ArrayList
 import org.osmdroid.config.Configuration.*
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.views.overlay.Marker
 
 import org.osmdroid.util.BoundingBox
@@ -28,13 +30,23 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 
 import org.osmdroid.views.overlay.compass.CompassOverlay
+import org.osmdroid.views.overlay.MapEventsOverlay
+import org.osmdroid.views.overlay.Polygon
+import android.app.Activity
+import java.lang.ClassCastException
+import android.R
+import android.graphics.Color
+import androidx.fragment.app.FragmentManager
+import com.google.android.gms.dynamic.SupportFragmentWrapper
+
 
 class MapFragment : Fragment(){
 
     private var _binding: FragmentMapBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     lateinit var currentLocation: GeoPoint
+    lateinit var tapLocation: GeoPoint
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -44,6 +56,14 @@ class MapFragment : Fragment(){
         (activity as MainActivity).currentLocation.observe(viewLifecycleOwner, {
             currentLocation = it
             currentLocationMarker()
+        })
+
+        //observer od markera klikniecia (LiveData)
+        (activity as MainActivity).tapLocation.observe(viewLifecycleOwner, {
+            tapLocation = it
+
+            //wywolywanie testowej funkcji rysowania
+            drawPolylineTest()
         })
 
         Configuration.getInstance().load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
@@ -65,6 +85,8 @@ class MapFragment : Fragment(){
         )
 
         setMapOverlays()
+
+
 
         return view
     }
@@ -127,6 +149,18 @@ class MapFragment : Fragment(){
 
     }
 
+    //Dodawanie rysunku (fun testowa)
+    fun drawPolylineTest(){
+        val circle = Polygon(binding.map)
+        circle.points = Polygon.pointsAsCircle(tapLocation, 100.0)
+        circle.setFillColor(0x12121212);
+        circle.setStrokeColor(Color.RED);
+        circle.setStrokeWidth(2F);
+        circle.title = ("Center of circle x: " + tapLocation.latitude + " y: " + tapLocation.longitude)
+        binding.map.getOverlays().add(circle);
+        binding.map.invalidate();
+    }
+
     private fun setMapOverlays() {
         binding.map.controller.setZoom(13.0)
         binding.map.minZoomLevel = 13.0
@@ -155,6 +189,7 @@ class MapFragment : Fragment(){
                 20.825
             )
         )
+        binding.map.overlays.add(0, (activity as MainActivity).mapEventsOverlay);
 //        println(binding.map.projection.fromPixels(0, 0).latitude)
 //        println(binding.map.projection.fromPixels(binding.map.width, binding.map.height).longitude)
     }
@@ -173,4 +208,6 @@ class MapFragment : Fragment(){
             e.printStackTrace()
         }
     }
+
+
 }

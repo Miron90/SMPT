@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.net.Uri
 import android.os.Build
@@ -19,11 +20,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
 import com.example.smpt.databinding.ActivitySecondBinding
+import com.example.smpt.databinding.FragmentMapBinding
+import com.example.smpt.ui.map.MapFragment
 import com.example.smpt.ui.services.ForegroundOnlyLocationService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -32,9 +36,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.MapEventsOverlay
+import org.osmdroid.views.overlay.Polygon
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), MapEventsReceiver {
     private val binding: ActivitySecondBinding by lazy {
         ActivitySecondBinding.inflate(layoutInflater)
     }
@@ -48,20 +55,20 @@ class MainActivity : AppCompatActivity(){
     private lateinit var foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver
 
     var currentLocation = MutableLiveData<GeoPoint>()
+    var tapLocation = MutableLiveData<GeoPoint>()
 
-    var latitude: Double = 0.0
-    var longitude: Double = 0.0
+    var mapEventsOverlay = MapEventsOverlay(this, this)
 
     private val foregroundServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d("Location","binder")
+            Log.d("Location", "binder")
             val binder = service as ForegroundOnlyLocationService.LocalBinder
             foregroundLocationService = binder.service
             foregroundLocationServiceBound = true
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            Log.d("Location","not bound")
+            Log.d("Location", "not bound")
             foregroundLocationService = null
             foregroundLocationServiceBound = false
         }
@@ -73,33 +80,34 @@ class MainActivity : AppCompatActivity(){
 
         foregroundBroadcastReceiver = ForegroundOnlyBroadcastReceiver()
 
-
-
         findViewById<Button>(R.id.showTargetsButton).setOnClickListener {
-            Log.d("Location",foregroundPermissionApproved().toString())
-            if(foregroundPermissionApproved()){
+            Log.d("Location", foregroundPermissionApproved().toString())
+            if (foregroundPermissionApproved()) {
                 Log.d("Location", foregroundLocationService.toString())
                 foregroundLocationService?.subscribeToLocationUpdates()
-                    ?: Log.d("Location","Service not bound")
-            }else{
-                Log.d("Location","request")
+                    ?: Log.d("Location", "Service not bound")
+            } else {
+                Log.d("Location", "request")
                 requestForegroundPermissions()
             }
         }
 
     }
+
     override fun onStart() {
         super.onStart()
 
         val serviceIntent = Intent(this, ForegroundOnlyLocationService::class.java)
         bindService(serviceIntent, foregroundServiceConnection, Context.BIND_AUTO_CREATE)
     }
+
     override fun onResume() {
         super.onResume()
         LocalBroadcastManager.getInstance(this).registerReceiver(
             foregroundBroadcastReceiver,
             IntentFilter(
-                ForegroundOnlyLocationService.ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
+                ForegroundOnlyLocationService.ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST
+            )
         )
     }
 
@@ -137,13 +145,13 @@ class MainActivity : AppCompatActivity(){
                 R.string.permission_rationale,
                 Snackbar.LENGTH_LONG
             ).setAction("OK") {
-                    // Request permission
-                    ActivityCompat.requestPermissions(
-                        this@MainActivity,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
-                    )
-                }
+                // Request permission
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+                )
+            }
                 .show()
         } else {
             Log.d("Location", "Request foreground only permission")
@@ -154,6 +162,7 @@ class MainActivity : AppCompatActivity(){
             )
         }
     }
+
     @SuppressLint("MissingSuperCall")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -207,10 +216,11 @@ class MainActivity : AppCompatActivity(){
 
             if (location != null) {
                 currentLocation.postValue(GeoPoint(location.latitude, location.longitude))
-               // Log.d("Location", outputLocationText)
+                // Log.d("Location", outputLocationText)
             }
         }
     }
+
     fun Location?.toText(): String {
         return if (this != null) {
             "($latitude, $longitude)"
@@ -218,4 +228,26 @@ class MainActivity : AppCompatActivity(){
             "Unknown location"
         }
     }
+
+    //funkcja od interfejsu MapRecievera
+    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+        Toast.makeText(this, "Tapped", Toast.LENGTH_SHORT).show()
+        //tapLocation.postValue(GeoPoint(p))
+        return true
+    }
+
+    //funkcja od interfejsu MapRecievera
+    override fun longPressHelper(p: GeoPoint?): Boolean {
+        if (p != null) {
+
+            tapLocation.postValue(GeoPoint(p))
+            Toast.makeText(
+                this,
+                "Tap on (" + p.latitude + "," + p.longitude + ")",
+                Toast.LENGTH_SHORT
+            ).show()
+        };
+        return false
+    }
+
 }
