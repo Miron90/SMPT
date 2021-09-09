@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
 
         Log.d("Location", foregroundPermissionApproved().toString())
         if (foregroundPermissionApproved()) {
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             Log.d("Location", foregroundPermissionApproved().toString())
             if (foregroundPermissionApproved()) {
                 Log.d("Location", foregroundLocationService.toString())
@@ -106,6 +105,7 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
 
     override fun onResume() {
         super.onResume()
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         LocalBroadcastManager.getInstance(this).registerReceiver(
             foregroundBroadcastReceiver,
             IntentFilter(
