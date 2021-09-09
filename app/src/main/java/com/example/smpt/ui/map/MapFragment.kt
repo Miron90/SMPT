@@ -73,10 +73,10 @@ class MapFragment : Fragment() {
             for (shapeLoc in it) {
                 Log.d("Shape", shapeLoc.toString());
                 if(shapeLoc.shapeId!! > shapeId){
-                    Log.d("Shape", "in if");
+                    Log.d("Shape", "in if"+shapeLoc.shapeId);
                     if(shape.size>0) {
                         Log.d("Shape", "in if with size"+shape.size);
-                        drawAShape(shape, shapeLoc.shapeId.toString())
+                        drawAShape(shape, shapeId.toString())
                     }
                     shapeId++;
                     shape.clear()
@@ -86,8 +86,9 @@ class MapFragment : Fragment() {
                 shapeLocation = GeoPoint(shapeLoc.latitude, shapeLoc.longitude)
             }
             if(shape.size>0) {
-                Log.d("Shape", "in if with size"+shape.size);
-                drawAShape(shape, shapeId.toString()) // <3 shapeId is a id of the shape
+                Log.d("Shape", "in if with size"+shapeId);
+                drawAShape(shape, shapeId.toString())
+            shape.clear()// <3 shapeId is a id of the shape
             }
         })
 
