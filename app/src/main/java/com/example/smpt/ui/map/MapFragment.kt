@@ -31,6 +31,7 @@ class MapFragment : Fragment() {
     private val binding get() = _binding!!
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     lateinit var currentLocation: GeoPoint
+    lateinit var shapeLocation: GeoPoint
     lateinit var tapLocation: GeoPoint
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -45,10 +46,10 @@ class MapFragment : Fragment() {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        //observer od m
+        //observer od lokalizacji uzytkownikow
         (activity as MainActivity).userLocations.observe(viewLifecycleOwner, {
             for (loc in it) {
-                currentLocation = GeoPoint(loc.latitude, loc.longtitude)
+                currentLocation = GeoPoint(loc.latitude, loc.longitude)
                 if (loc.name.equals(
                         sharedPreferences.getString(
                             Constants().USERNAME,
@@ -61,6 +62,12 @@ class MapFragment : Fragment() {
                     drawLocationMarker("Blue", loc.name!!)
                 }
 
+            }
+        })
+
+        (activity as MainActivity).shapeLocations.observe(viewLifecycleOwner, {
+            for (shapeLoc in it) {
+                shapeLocation = GeoPoint(shapeLoc.latitude, shapeLoc.longitude)
             }
         })
 

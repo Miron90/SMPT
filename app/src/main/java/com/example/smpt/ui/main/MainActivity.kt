@@ -23,6 +23,7 @@ import com.example.smpt.databinding.ActivityMainBinding
 import com.example.smpt.ui.ApiInterface
 import com.example.smpt.ui.Localization
 import com.example.smpt.ui.Constants
+import com.example.smpt.ui.ShapeLocalization
 import com.example.smpt.ui.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
@@ -48,8 +49,10 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
     var currentLocation = MutableLiveData<GeoPoint>()
     var tapLocation = MutableLiveData<GeoPoint>()
     var userLocations = MutableLiveData<Array<Localization>>()
+    var shapeLocations = MutableLiveData<Array<ShapeLocalization>>()
     var latitude: Double = 0.0
     var longitude: Double = 0.0
+    var shapeId: Int = 0
 
     var mapEventsOverlay = MapEventsOverlay(this)
 
@@ -177,7 +180,8 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
                 else -> {
                     // Permission denied.
                     Snackbar.make(
-                        findViewById(R.id.activity_main),
+                        //findViewById(R.id.activity_main),
+                        binding.root,
                         R.string.permission_denied_explanation,
                         Snackbar.LENGTH_LONG
                     )
@@ -228,6 +232,8 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
             if (location != null) {
                 latitude = location.latitude
                 longitude = location.longitude
+
+
                 currentLocation.postValue(GeoPoint(location.latitude, location.longitude))
                 // Log.d("Location", outputLocationText)
                 Log.d("API", "sending data")
@@ -237,6 +243,50 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
                     longitude,
                     sharedPreferences.getString(Constants().USERNAME, "noSharedPref")
                 )
+                var shapeLoc = ShapeLocalization(
+                    latitude,
+                    longitude,
+                    shapeId
+                )
+
+                val shapeInterfaceSend = ApiInterface.create().sendShapeLocalization(shapeLoc)
+                shapeInterfaceSend.enqueue(object : Callback<String> {
+                    override  fun  onResponse(
+                        call: Call<String>,
+                        response: Response<String>
+                    ){
+                        if (response.body() != null) Log.d(
+                            "API",
+                            "shape work" + response.message()
+                        )
+                        Log.d("API", "shape work" + response.message())
+                    }
+                    override fun onFailure(call: Call<String>?, t: Throwable?) {
+                        Log.d("API", "shape Error" + t.toString())
+                    }
+                })
+                val shapeInterface = ApiInterface.create().getShapeLocalization()
+                shapeInterface.enqueue(object : Callback<Array<ShapeLocalization>> {
+                    override fun onResponse(
+                        call: Call<Array<ShapeLocalization>>,
+                        response: Response<Array<ShapeLocalization>>
+                    ) {
+                        if (response.body() != null) {
+                            shapeLocations.postValue(response.body()!!)
+                            for (shapeLoc in response.body()!!) {
+                                Log.d("API", "shape work" + shapeLoc)
+                                //sharedPreferences.getString(Constants().USERNAME, "noSharedPref")
+                            }
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<Array<ShapeLocalization>>?,
+                        t: Throwable?
+                    ) {
+                        Log.d("API", "shape Error" + t.toString())
+                    }
+                })
 
 
                 val apiInterfacesend = ApiInterface.create().sendLocalization(loc)
@@ -266,7 +316,6 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
                             userLocations.postValue(response.body()!!)
                             for (loc in response.body()!!) {
                                 Log.d("API", "work" + loc)
-                                //TODO zrob cos z punktami
                                 //sharedPreferences.getString(Constants().USERNAME, "noSharedPref")
                             }
                         }

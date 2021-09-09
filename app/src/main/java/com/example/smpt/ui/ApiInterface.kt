@@ -12,12 +12,17 @@ import com.google.gson.GsonBuilder
 
 interface ApiInterface {
 
-    @GET("api/map")
+    @GET("api/users")
     fun getLocalization() : Call<Array<Localization>>
 
-
-    @POST("api/map")
+    @POST("api/users")
     fun sendLocalization(@Body localization: Localization): Call<String>
+
+    @GET("api/shapes")
+    fun getShapeLocalization() : Call<Array<ShapeLocalization>>
+
+    @POST("api/shapes")
+    fun sendShapeLocalization(@Body shapeLocalization: ShapeLocalization): Call<String>
 
     companion object {
 
