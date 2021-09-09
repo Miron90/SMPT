@@ -20,6 +20,8 @@ import org.osmdroid.views.overlay.Polygon
 import android.R
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import androidx.core.content.res.ResourcesCompat
 import com.example.smpt.ui.Constants
 import org.osmdroid.util.MapTileIndex
 
@@ -185,6 +187,8 @@ class MapFragment : Fragment() {
             ("Center of circle x: " + tapLocation.latitude + " y: " + tapLocation.longitude)
         binding.map.overlays.add(circle);
         binding.map.invalidate();
+
+
     }
 
     private fun setMapOverlays() {

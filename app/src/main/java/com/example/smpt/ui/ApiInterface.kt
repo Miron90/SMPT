@@ -18,10 +18,10 @@ interface ApiInterface {
     @POST("api/users")
     fun sendLocalization(@Body localization: Localization): Call<String>
 
-    @GET("api/shapes")
+    @GET("api/zone")
     fun getShapeLocalization() : Call<Array<ShapeLocalization>>
 
-    @POST("api/shapes")
+    @POST("api/zone")
     fun sendShapeLocalization(@Body shapeLocalization: ShapeLocalization): Call<String>
 
     companion object {
