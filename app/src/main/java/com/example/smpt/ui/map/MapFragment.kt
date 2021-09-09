@@ -11,15 +11,9 @@ import androidx.fragment.app.Fragment
 import com.example.smpt.databinding.FragmentMapBinding
 import com.example.smpt.ui.main.MainActivity
 import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 import java.util.ArrayList
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.util.BoundingBox
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.Polygon
@@ -27,7 +21,9 @@ import android.R
 import android.content.SharedPreferences
 import android.graphics.Color
 import com.example.smpt.ui.Constants
+import org.osmdroid.util.MapTileIndex
 
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 
 class MapFragment : Fragment() {
 
@@ -81,19 +77,23 @@ class MapFragment : Fragment() {
         Configuration.getInstance().isDebugMode = true
         Configuration.getInstance().isDebugTileProviders = true
 
-        prepareMapFile("bemowo.zip")
+        binding.map.setTileSource(object : OnlineTileSourceBase(
+            "",
+            10,
+            15,
+            256,
+            "",
+            arrayOf(Constants().TILE_URL)
+        ) {
+            override fun getTileURLString(pMapTileIndex: Long): String {
+                return (baseUrl
+                        + MapTileIndex.getZoom(pMapTileIndex)
+                        + "/" + MapTileIndex.getX(pMapTileIndex)
+                        + "/" + MapTileIndex.getY(pMapTileIndex)
+                        + mImageFilenameEnding)
+            }
+        })
 
-        binding.map.setUseDataConnection(false)
-        binding.map.setTileSource(
-            XYTileSource(
-                "4uMaps",
-                13,
-                15,
-                256,
-                ".png",
-                arrayOf("")
-            )
-        )
         setMapOverlays()
         return view
     }
@@ -203,30 +203,14 @@ class MapFragment : Fragment() {
         )
         compassOverlay.enableCompass()
         binding.map.overlays.add(compassOverlay)
-        binding.map.setScrollableAreaLimitDouble(
-            BoundingBox(
-                52.3,
-                21.05,
-                52.2,
-                20.825
-            )
-        )
+//        binding.map.setScrollableAreaLimitDouble(
+//            BoundingBox(
+//                52.3,
+//                21.05,
+//                52.2,
+//                20.825
+//            )
+//        )
         binding.map.overlays.add(0, (activity as MainActivity).mapEventsOverlay)
-    }
-
-    private fun prepareMapFile(fileName: String) {
-        try {
-            val inputStream: InputStream = requireContext().assets.open(fileName)
-            val size: Int = inputStream.available()
-            val buffer = ByteArray(size)
-            inputStream.read(buffer)
-            val file =
-                File(Configuration.getInstance().getOsmdroidBasePath(requireContext()), fileName)
-            FileOutputStream(file).use {
-                it.write(buffer)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
     }
 }
