@@ -68,8 +68,26 @@ class MapFragment : Fragment() {
         })
 
         (activity as MainActivity).shapeLocations.observe(viewLifecycleOwner, {
+            var shapeId: Int = 0
+            var shape: MutableList<GeoPoint> = ArrayList<GeoPoint>()
             for (shapeLoc in it) {
+                Log.d("Shape", shapeLoc.toString());
+                if(shapeLoc.shapeId!! > shapeId){
+                    Log.d("Shape", "in if");
+                    if(shape.size>0) {
+                        Log.d("Shape", "in if with size"+shape.size);
+                        drawAShape(shape, shapeLoc.shapeId.toString())
+                    }
+                    shapeId++;
+                    shape.clear()
+                }
+                Log.d("Shape", "in added");
+                shape.add(GeoPoint(shapeLoc.latitude, shapeLoc.longitude))
                 shapeLocation = GeoPoint(shapeLoc.latitude, shapeLoc.longitude)
+            }
+            if(shape.size>0) {
+                Log.d("Shape", "in if with size"+shape.size);
+                drawAShape(shape, shapeId.toString()) // <3 shapeId is a id of the shape
             }
         })
 
@@ -105,6 +123,29 @@ class MapFragment : Fragment() {
 
         setMapOverlays()
         return view
+    }
+
+    private fun drawAShape(shape: MutableList<GeoPoint>, shapeId: String) {
+        val geoPoints: MutableList<GeoPoint> = ArrayList()
+//add your points here
+//add your points here
+        val polygon = Polygon() //see note below
+
+        shape.add(shape[0]) //forces the loop to close(connect last point to first point)
+
+        polygon.fillPaint.color = Color.parseColor("#1EFFE70E") //set fill color
+
+        polygon.points = shape
+        polygon.title = "A sample polygon"
+        polygon.id = shapeId
+        binding.map.overlays.forEach {
+            if (it is Polygon && it.id == shapeId) {
+                binding.map.overlays.remove(it)
+            }
+        }
+        binding.map.getOverlayManager().add(polygon);
+
+        binding.map.invalidate();
     }
 
     private fun drawLocationMarker(s: String, name: String) {
@@ -178,16 +219,28 @@ class MapFragment : Fragment() {
 
     //Dodawanie rysunku (fun testowa)
     private fun drawPolylineTest() {
-        val circle = Polygon(binding.map)
-        circle.points = Polygon.pointsAsCircle(tapLocation, 1000.0)
-        circle.setFillColor(0x12121212);
-        circle.setStrokeColor(Color.RED);
-        circle.setStrokeWidth(2F);
-        circle.title =
-            ("Center of circle x: " + tapLocation.latitude + " y: " + tapLocation.longitude)
-        binding.map.overlays.add(circle);
-        binding.map.invalidate();
+//        val circle = Polygon(binding.map)
+//        circle.points = Polygon.pointsAsCircle(tapLocation, 1000.0)
+//        circle.setFillColor(0x12121212);
+//        circle.setStrokeColor(Color.RED);
+//        circle.setStrokeWidth(2F);
+//        circle.title =
+//            ("Center of circle x: " + tapLocation.latitude + " y: " + tapLocation.longitude)
+//        binding.map.overlays.add(circle);
+//        binding.map.invalidate();
 
+        val geoPoints: MutableList<GeoPoint> = ArrayList()
+        geoPoints.add(GeoPoint(52.2448,20.9591))
+        geoPoints.add(GeoPoint(52.2082,21.0051))
+        geoPoints.add(GeoPoint(52.2094,20.9560))
+        geoPoints.add(GeoPoint(52.2305,21.0034))
+        val polygon = Polygon() //see note below
+        geoPoints.add(geoPoints[0]) //forces the loop to close(connect last point to first point)
+        polygon.fillPaint.color = Color.parseColor("#1EFFE70E") //set fill color
+        polygon.points = geoPoints
+        polygon.title = "A sample polygon"
+        binding.map.overlays.add(polygon);
+        binding.map.invalidate();
 
     }
 
