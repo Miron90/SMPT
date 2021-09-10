@@ -50,13 +50,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
-
-
-
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'org.osmdroid:osmdroid-android:6.1.11'
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
 
 }

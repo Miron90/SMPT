@@ -20,11 +20,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
 import com.example.smpt.databinding.ActivityMainBinding
-import com.example.smpt.ui.ApiInterface
-import com.example.smpt.ui.Localization
+import com.example.smpt.remote.ApiInterface
+import com.example.smpt.models.Localization
 import com.example.smpt.ui.Constants
-import com.example.smpt.ui.ShapeLocalization
-import com.example.smpt.ui.services.ForegroundOnlyLocationService
+import com.example.smpt.models.ShapeLocalization
+import com.example.smpt.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
@@ -333,7 +333,3 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
         }
     }
 }
-
-
-
-

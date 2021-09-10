@@ -1,11 +1,9 @@
 package com.example.smpt.ui.login
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.databinding.ActivityLoginBinding
 import com.example.smpt.ui.main.MainActivity
@@ -36,11 +34,5 @@ class LoginActivity : AppCompatActivity() {
 
     private fun attemptLogin(login: String) {
         viewModel.attemptLogin(login)
-    }
-}
-
-class LoginViewModelFactory(private val sharedPreferences: SharedPreferences) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return LoginViewModel(sharedPreferences) as T
     }
 }

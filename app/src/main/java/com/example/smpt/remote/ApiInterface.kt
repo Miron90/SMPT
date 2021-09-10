@@ -1,6 +1,8 @@
-package com.example.smpt.ui
+package com.example.smpt.remote
 
-
+import com.example.smpt.ui.Constants
+import com.example.smpt.models.Localization
+import com.example.smpt.models.ShapeLocalization
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -8,7 +10,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import com.google.gson.GsonBuilder
-
 
 interface ApiInterface {
 
@@ -26,8 +27,6 @@ interface ApiInterface {
 
     companion object {
 
-        var BASE_URL = "http://172.16.35.152:5001"
-
         fun create() : ApiInterface {
 
             val gson = GsonBuilder()
@@ -36,11 +35,10 @@ interface ApiInterface {
 
             val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(BASE_URL)
+                .baseUrl(Constants().BASE_URL)
                 .build()
             return retrofit.create(ApiInterface::class.java)
 
         }
     }
-
 }

@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".ui.services.ForegroundOnlyLocationService"
+            android:name="com.example.smpt.services.ForegroundOnlyLocationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />

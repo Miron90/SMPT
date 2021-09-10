@@ -1,4 +1,4 @@
-package com.example.smpt.ui
+package com.example.smpt.models
 
 data class Localizationx (var value: Array<String>)
 

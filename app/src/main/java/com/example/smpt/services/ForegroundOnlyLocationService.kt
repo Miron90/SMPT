@@ -1,9 +1,8 @@
-package com.example.smpt.ui.services
+package com.example.smpt.services
 
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -14,10 +13,8 @@ import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.R
-import com.example.smpt.ui.main.MainActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -180,43 +177,6 @@ class ForegroundOnlyLocationService : Service() {
             notificationManager.createNotificationChannel(notificationChannel)
         }
 
-//        val bigTextStyle = NotificationCompat.BigTextStyle()
-//            .bigText(mainNotificationText)
-//            .setBigContentTitle(titleText)
-//
-//        val launchActivityIntent = Intent(this, MainActivity::class.java)
-//
-//        val cancelIntent = Intent(this, ForegroundOnlyLocationService::class.java)
-//        cancelIntent.putExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, true)
-//
-//        val servicePendingIntent = PendingIntent.getService(
-//            this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-//
-//        val activityPendingIntent = PendingIntent.getActivity(
-//            this, 0, launchActivityIntent, 0)
-//
-//        // 4. Build and issue the notification.
-//        // Notification Channel Id is ignored for Android pre O (26).
-//        val notificationCompatBuilder =
-//            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-//
-//        return notificationCompatBuilder
-//            .setStyle(bigTextStyle)
-//            .setContentTitle(titleText)
-//            .setContentText(mainNotificationText)
-//            .setDefaults(NotificationCompat.DEFAULT_ALL)
-//            .setOngoing(true)
-//            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-//            .addAction(
-//                R.drawable.ic_launcher_foreground, "launch",
-//                activityPendingIntent
-//            )
-//            .addAction(
-//                R.drawable.ic_launcher_foreground,
-//                "update",
-//                servicePendingIntent
-//            )
-//            .build()
         return null
     }
 
