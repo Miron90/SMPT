@@ -8,7 +8,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
