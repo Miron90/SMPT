@@ -19,21 +19,24 @@ import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.Polygon
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.R
 import com.example.smpt.R.drawable
 import com.example.smpt.models.Sign
 import com.example.smpt.ui.Constants
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.MapTileIndex
 
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
+import org.osmdroid.views.overlay.MapEventsOverlay
 import java.lang.reflect.Field
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
 
 
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), MapEventsReceiver {
 
     private var _binding: FragmentMapBinding? = null
     private lateinit var viewModel: MapViewModel
@@ -41,8 +44,9 @@ class MapFragment : Fragment() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     lateinit var currentLocation: GeoPoint
     lateinit var shapeLocation: GeoPoint
-    lateinit var tapLocation: GeoPoint
+    private lateinit var tapLocation: GeoPoint
 
+    var mapEventsOverlay = MapEventsOverlay(this)
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
@@ -100,11 +104,6 @@ class MapFragment : Fragment() {
                 Log.d("SIGNS", sign.toString())
                 drawSignMarker(sign)
             }
-        })
-
-        //observer od markera klikniecia (LiveData)
-        (activity as MainActivity).tapLocation.observe(viewLifecycleOwner, {
-            tapLocation = it
         })
 
         Configuration.getInstance()
@@ -250,6 +249,22 @@ class MapFragment : Fragment() {
         )
         compassOverlay.enableCompass()
         binding.map.overlays.add(compassOverlay)
-        binding.map.overlays.add(0, (activity as MainActivity).mapEventsOverlay)
+        binding.map.overlays.add(0, mapEventsOverlay)
+    }
+
+    //funkcja od interfejsu MapRecievera (klik na mape)
+    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+        Toast.makeText(requireContext(), "Tapped", Toast.LENGTH_SHORT).show()
+        return true
+    }
+
+    //funkcja od interfejsu MapRecievera (long klik na mape)
+    override fun longPressHelper(p: GeoPoint?): Boolean {
+        if (p != null) {
+            tapLocation = GeoPoint(p)
+            Toast.makeText(requireContext(), "Tap on (" + p.latitude + "," + p.longitude + ")",
+                Toast.LENGTH_SHORT).show()
+        }
+        return false
     }
 }
