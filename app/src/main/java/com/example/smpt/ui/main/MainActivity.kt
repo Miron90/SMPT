@@ -11,11 +11,10 @@ import android.os.IBinder
 import androidx.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
@@ -30,58 +29,36 @@ import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.overlay.MapEventsOverlay
 
-class MainActivity : AppCompatActivity(), MapEventsReceiver {
+class MainActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE: Int = 34
-    private val viewModel: MainViewModel by viewModels()
+    private lateinit var viewModel: MainViewModel
 
     private var foregroundLocationServiceBound = false
     private var foregroundLocationService: ForegroundOnlyLocationService? = null
     private lateinit var foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver
 
     var currentLocation = MutableLiveData<GeoPoint>()
-    var tapLocation = MutableLiveData<GeoPoint>()
     var userLocations = MutableLiveData<Array<Localization>>()
     var shapeLocations = MutableLiveData<Array<ShapeLocalization>>()
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var shapeId: Int = 0
 
-    var mapEventsOverlay = MapEventsOverlay(this)
 
-    private val foregroundServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d("Location", "binder")
-            val binder = service as ForegroundOnlyLocationService.LocalBinder
-            foregroundLocationService = binder.service
-            foregroundLocationServiceBound = true
-            if (foregroundPermissionApproved()) {
-                Log.d("Location", foregroundLocationService.toString())
-                foregroundLocationService?.subscribeToLocationUpdates()
-                    ?: Log.d("Location", "Service not bound")
-            } else {
-                Log.d("Location", "request")
-                requestForegroundPermissions()
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            Log.d("Location", "not bound")
-            foregroundLocationService = null
-            foregroundLocationServiceBound = false
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        viewModel = ViewModelProvider(this, MainViewModelFactory())
+            .get(MainViewModel::class.java)
+
         foregroundBroadcastReceiver = ForegroundOnlyBroadcastReceiver()
 
         Log.d("Location", foregroundPermissionApproved().toString())
@@ -128,6 +105,29 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
         }
         foregroundLocationService?.unsubscribeToLocationUpdates()
         super.onStop()
+    }
+
+    private val foregroundServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            Log.d("Location", "binder")
+            val binder = service as ForegroundOnlyLocationService.LocalBinder
+            foregroundLocationService = binder.service
+            foregroundLocationServiceBound = true
+            if (foregroundPermissionApproved()) {
+                Log.d("Location", foregroundLocationService.toString())
+                foregroundLocationService?.subscribeToLocationUpdates()
+                    ?: Log.d("Location", "Service not bound")
+            } else {
+                Log.d("Location", "request")
+                requestForegroundPermissions()
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            Log.d("Location", "not bound")
+            foregroundLocationService = null
+            foregroundLocationServiceBound = false
+        }
     }
 
     private fun foregroundPermissionApproved(): Boolean {
@@ -180,7 +180,6 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
                 else -> {
                     // Permission denied.
                     Snackbar.make(
-                        //findViewById(R.id.activity_main),
                         binding.root,
                         R.string.permission_denied_explanation,
                         Snackbar.LENGTH_LONG
@@ -204,25 +203,6 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
         }
     }
 
-    //funkcja od interfejsu MapRecievera (klik na mape)
-    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        Toast.makeText(this, "Tapped", Toast.LENGTH_SHORT).show()
-        return true
-    }
-
-    //funkcja od interfejsu MapRecievera (long klik na mape)
-    override fun longPressHelper(p: GeoPoint?): Boolean {
-        if (p != null) {
-            tapLocation.postValue(GeoPoint(p))
-            Toast.makeText(
-                this,
-                "Tap on (" + p.latitude + "," + p.longitude + ")",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        return false
-    }
-
     private inner class ForegroundOnlyBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val location = intent.getParcelableExtra<Location>(
@@ -238,16 +218,8 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
                 // Log.d("Location", outputLocationText)
                 Log.d("API", "sending data")
 
-                var loc = Localization(
-                    latitude,
-                    longitude,
-                    sharedPreferences.getString(Constants().USERNAME, "noSharedPref")
-                )
-                var shapeLoc = ShapeLocalization(
-                    latitude,
-                    longitude,
-                    shapeId
-                )
+                val loc = Localization(latitude, longitude, sharedPreferences.getString(Constants().USERNAME, "noSharedPref"))
+                val shapeLoc = ShapeLocalization(latitude, longitude, shapeId)
 
                 val shapeInterfaceSend = ApiInterface.create().sendShapeLocalization(shapeLoc)
                 shapeInterfaceSend.enqueue(object : Callback<String> {
@@ -274,7 +246,7 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
                         if (response.body() != null) {
                             shapeLocations.postValue(response.body()!!)
                             for (shapeLoc in response.body()!!) {
-                                Log.d("API", "shape work" + shapeLoc)
+                                Log.d("API", "shape work$shapeLoc")
                                 //sharedPreferences.getString(Constants().USERNAME, "noSharedPref")
                             }
                         }
