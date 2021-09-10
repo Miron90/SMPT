@@ -24,6 +24,7 @@ import com.example.smpt.remote.ApiInterface
 import com.example.smpt.models.Localization
 import com.example.smpt.ui.Constants
 import com.example.smpt.models.ShapeLocalization
+import com.example.smpt.models.Sign
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
     var tapLocation = MutableLiveData<GeoPoint>()
     var userLocations = MutableLiveData<Array<Localization>>()
     var shapeLocations = MutableLiveData<Array<ShapeLocalization>>()
+    var signsLocations = MutableLiveData<Array<Sign>>()
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var shapeId: Int = 0
@@ -249,22 +251,6 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
                     shapeId
                 )
 
-                val shapeInterfaceSend = ApiInterface.create().sendShapeLocalization(shapeLoc)
-                shapeInterfaceSend.enqueue(object : Callback<String> {
-                    override  fun  onResponse(
-                        call: Call<String>,
-                        response: Response<String>
-                    ){
-                        if (response.body() != null) Log.d(
-                            "API",
-                            "shape work" + response.message()
-                        )
-                        Log.d("API", "shape work" + response.message())
-                    }
-                    override fun onFailure(call: Call<String>?, t: Throwable?) {
-                        Log.d("API", "shape Error" + t.toString())
-                    }
-                })
                 val shapeInterface = ApiInterface.create().getShapeLocalization()
                 shapeInterface.enqueue(object : Callback<Array<ShapeLocalization>> {
                     override fun onResponse(
@@ -323,6 +309,31 @@ class MainActivity : AppCompatActivity(), MapEventsReceiver {
 
                     override fun onFailure(
                         call: Call<Array<Localization>>?,
+                        t: Throwable?
+                    ) {
+                        Log.d("API", "Error" + t.toString())
+                    }
+                })
+                Log.d("API", apiInterface.toString())
+
+
+                val signInterface = ApiInterface.create().getSigns()
+                signInterface.enqueue(object : Callback<Array<Sign>> {
+                    override fun onResponse(
+                        call: Call<Array<Sign>>,
+                        response: Response<Array<Sign>>
+                    ) {
+                        if (response.body() != null) {
+                            signsLocations.postValue(response.body()!!)
+                            for (loc in response.body()!!) {
+                                Log.d("API", "work" + loc)
+                                //sharedPreferences.getString(Constants().USERNAME, "noSharedPref")
+                            }
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<Array<Sign>>?,
                         t: Throwable?
                     ) {
                         Log.d("API", "Error" + t.toString())
