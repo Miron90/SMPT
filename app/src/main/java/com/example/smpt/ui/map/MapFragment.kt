@@ -24,12 +24,17 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.R
 import com.example.smpt.R.drawable
+import com.example.smpt.models.Sign
 import com.example.smpt.ui.Constants
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.MapTileIndex
 
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
+import java.lang.reflect.Field
+import android.graphics.drawable.PictureDrawable
+import com.caverock.androidsvg.SVG
+
 
 class MapFragment : Fragment(), MapEventsReceiver {
 
@@ -93,6 +98,14 @@ class MapFragment : Fragment(), MapEventsReceiver {
             }
         })
 
+
+        (activity as MainActivity).signsLocations.observe(viewLifecycleOwner, {
+            for (sign in it) {
+                Log.d("SIGNS", sign.toString())
+                drawSignMarker(sign)
+            }
+        })
+
         Configuration.getInstance()
             .load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
         Configuration.getInstance().isDebugMapView = true
@@ -118,6 +131,31 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
         setMapOverlays()
         return view
+    }
+
+    private fun drawSignMarker(signTemp: Sign) {
+        var signName = signTemp.signId.toString()+": "+signTemp.signCode
+        Log.d("SIGNS", "in func")
+        val svg: SVG = SVG.getFromString(signTemp.signSVG)
+        val pd = PictureDrawable(svg.renderToPicture())
+        val currentPosMarker = Marker(binding.map)
+        binding.map.overlays.forEach {
+            if (it is Marker && it.id == signName) {
+                binding.map.overlays.remove(it)
+            }
+        }
+        binding.map.invalidate()
+
+        currentPosMarker.id = signName
+        currentPosMarker.position = GeoPoint(signTemp.latitude,signTemp.longitude)
+
+        currentPosMarker.icon = pd
+        currentPosMarker.setAnchor(Marker.ANCHOR_TOP, Marker.ANCHOR_RIGHT)
+        currentPosMarker.title = signName
+        binding.map.overlays.add(currentPosMarker)
+        Log.d("SIGNS", "in func")
+        binding.map.invalidate()
+
     }
 
     override fun onResume() {
