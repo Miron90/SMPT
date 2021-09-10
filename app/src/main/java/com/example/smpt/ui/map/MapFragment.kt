@@ -23,10 +23,15 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.R
 import com.example.smpt.R.drawable
+import com.example.smpt.models.Sign
 import com.example.smpt.ui.Constants
 import org.osmdroid.util.MapTileIndex
 
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
+import java.lang.reflect.Field
+import android.graphics.drawable.PictureDrawable
+import com.caverock.androidsvg.SVG
+
 
 class MapFragment : Fragment() {
 
@@ -89,6 +94,14 @@ class MapFragment : Fragment() {
             }
         })
 
+
+        (activity as MainActivity).signsLocations.observe(viewLifecycleOwner, {
+            for (sign in it) {
+                Log.d("SIGNS", sign.toString())
+                drawSignMarker(sign)
+            }
+        })
+
         //observer od markera klikniecia (LiveData)
         (activity as MainActivity).tapLocation.observe(viewLifecycleOwner, {
             tapLocation = it
@@ -119,6 +132,30 @@ class MapFragment : Fragment() {
 
         setMapOverlays()
         return view
+    }
+
+    private fun drawSignMarker(signTemp: Sign) {
+        Log.d("SIGNS", "in func")
+        val svg: SVG = SVG.getFromString(signTemp.signSVG)
+        val pd = PictureDrawable(svg.renderToPicture())
+        val currentPosMarker = Marker(binding.map)
+        binding.map.overlays.forEach {
+            if (it is Marker && it.id == "Sign") {
+                binding.map.overlays.remove(it)
+            }
+        }
+        binding.map.invalidate()
+
+        currentPosMarker.id = "Sign"
+        currentPosMarker.position = GeoPoint(signTemp.latitude,signTemp.longitude)
+
+        currentPosMarker.icon = pd
+        currentPosMarker.setAnchor(Marker.ANCHOR_TOP, Marker.ANCHOR_RIGHT)
+        currentPosMarker.title = "Sign"
+        binding.map.overlays.add(currentPosMarker)
+        Log.d("SIGNS", "in func")
+        binding.map.invalidate()
+
     }
 
     override fun onResume() {

@@ -3,6 +3,7 @@ package com.example.smpt.remote
 import com.example.smpt.ui.Constants
 import com.example.smpt.models.Localization
 import com.example.smpt.models.ShapeLocalization
+import com.example.smpt.models.Sign
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -22,8 +23,8 @@ interface ApiInterface {
     @GET("api/zone")
     fun getShapeLocalization() : Call<Array<ShapeLocalization>>
 
-    @POST("api/zone")
-    fun sendShapeLocalization(@Body shapeLocalization: ShapeLocalization): Call<String>
+    @GET("api/signs")
+    fun getSigns() : Call<Array<Sign>>
 
     companion object {
 
