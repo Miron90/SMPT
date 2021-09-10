@@ -5,4 +5,4 @@ data class Localization(var latitude: Double, var longitude: Double, var name: S
 
 data class ShapeLocalization(var latitude: Double, var longitude: Double, var shapeId: Int?)
 
-data class Sign(var latitude: Double, var longitude: Double, var signSVG: String)
+data class Sign(var latitude: Double, var longitude: Double, var signSVG: String, var signId: Int, var signCode: String)

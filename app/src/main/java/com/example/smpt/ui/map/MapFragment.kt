@@ -135,23 +135,24 @@ class MapFragment : Fragment() {
     }
 
     private fun drawSignMarker(signTemp: Sign) {
+        var signName = signTemp.signId.toString()+": "+signTemp.signCode
         Log.d("SIGNS", "in func")
         val svg: SVG = SVG.getFromString(signTemp.signSVG)
         val pd = PictureDrawable(svg.renderToPicture())
         val currentPosMarker = Marker(binding.map)
         binding.map.overlays.forEach {
-            if (it is Marker && it.id == "Sign") {
+            if (it is Marker && it.id == signName) {
                 binding.map.overlays.remove(it)
             }
         }
         binding.map.invalidate()
 
-        currentPosMarker.id = "Sign"
+        currentPosMarker.id = signName
         currentPosMarker.position = GeoPoint(signTemp.latitude,signTemp.longitude)
 
         currentPosMarker.icon = pd
         currentPosMarker.setAnchor(Marker.ANCHOR_TOP, Marker.ANCHOR_RIGHT)
-        currentPosMarker.title = "Sign"
+        currentPosMarker.title = signName
         binding.map.overlays.add(currentPosMarker)
         Log.d("SIGNS", "in func")
         binding.map.invalidate()
