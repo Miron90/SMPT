@@ -11,6 +11,16 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import com.google.gson.GsonBuilder
+import org.apache.http.conn.ssl.AbstractVerifier
+import org.apache.http.conn.ssl.AbstractVerifier.getDNSSubjectAlts
+import okhttp3.OkHttpClient
+import java.security.cert.Certificate
+import java.security.cert.X509Certificate
+import java.util.*
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLException
+import javax.net.ssl.SSLSession
+
 
 interface ApiInterface {
 
@@ -33,11 +43,16 @@ interface ApiInterface {
             val gson = GsonBuilder()
                 .setLenient()
                 .create()
-
+//            val builder = OkHttpClient().newBuilder()
+//            val okHttpClient = builder.build()
+//            builder.hostnameVerifier { hostname, session -> true }
             val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .baseUrl(Constants().BASE_URL)
+//                .client(okHttpClient)
                 .build()
+
+
             return retrofit.create(ApiInterface::class.java)
 
         }

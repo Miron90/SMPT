@@ -150,7 +150,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         currentPosMarker.position = GeoPoint(signTemp.latitude,signTemp.longitude)
 
         currentPosMarker.icon = pd
-        currentPosMarker.setAnchor(Marker.ANCHOR_TOP, Marker.ANCHOR_RIGHT)
+        currentPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         currentPosMarker.title = signName
         binding.map.overlays.add(currentPosMarker)
         Log.d("SIGNS", "in func")

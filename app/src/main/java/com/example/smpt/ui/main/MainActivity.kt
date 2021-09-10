@@ -257,7 +257,7 @@ class MainActivity : AppCompatActivity() {
                             "API",
                             "work" + response.message()
                         )
-                        Log.d("API", "work" + response.message())
+                        Log.d("API", "worksending" + response.message())
                     }
 
                     override fun onFailure(call: Call<String>?, t: Throwable?) {
@@ -283,7 +283,7 @@ class MainActivity : AppCompatActivity() {
                         call: Call<Array<Localization>>?,
                         t: Throwable?
                     ) {
-                        Log.d("API", "Error" + t.toString())
+//                        Log.d("API", "Error" + t.toString())
                     }
                 })
                 Log.d("API", apiInterface.toString())
