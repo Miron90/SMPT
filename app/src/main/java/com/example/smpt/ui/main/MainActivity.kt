@@ -21,6 +21,7 @@ import com.example.smpt.databinding.ActivityMainBinding
 import com.example.smpt.models.Localization
 import com.example.smpt.models.ShapeLocalization
 import com.example.smpt.models.Sign
+import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
