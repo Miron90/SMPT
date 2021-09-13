@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.databinding.ActivityLoginBinding
 import com.example.smpt.ui.main.MainActivity
@@ -26,6 +27,13 @@ class LoginActivity : AppCompatActivity() {
             if(it)
                 startActivity(Intent(this, MainActivity::class.java))
         })
+
+        binding.btnLogin.isEnabled = false
+
+        binding.inputLogin.doOnTextChanged {
+            text, start, before, count ->
+            binding.btnLogin.isEnabled = text!!.isNotEmpty()
+        }
 
         binding.btnLogin.setOnClickListener {
             attemptLogin(binding.inputLogin.text.toString())
