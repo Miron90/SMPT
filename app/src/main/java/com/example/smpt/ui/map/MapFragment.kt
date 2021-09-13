@@ -25,7 +25,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.R
 import com.example.smpt.R.drawable
-import com.example.smpt.models.Sign
 import com.example.smpt.ui.Constants
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.MapTileIndex
@@ -34,6 +33,7 @@ import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
+import com.example.smpt.models.MapMarker
 
 
 class MapFragment : Fragment(), MapEventsReceiver {
@@ -42,7 +42,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
     private lateinit var viewModel: MapViewModel
     private val binding get() = _binding!!
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    lateinit var currentLocation: GeoPoint
+    private var mapMarkers: MutableMap<String, MapMarker> = HashMap()
     lateinit var shapeLocation: GeoPoint
     private lateinit var tapLocation: GeoPoint
 
@@ -62,10 +62,14 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        //observer od lokalizacji uzytkownikow
+        (activity as MainActivity).removeMarkers.observe(viewLifecycleOwner,{
+            removeMarkers()
+        })
+
+            //observer od lokalizacji uzytkownikow
         (activity as MainActivity).userLocations.observe(viewLifecycleOwner, {
             for (loc in it) {
-                currentLocation = GeoPoint(loc.latitude, loc.longitude)
+                //mapMarkers[loc.name!!] = MapMarker(GeoPoint(loc.latitude, loc.longitude),true)
                 if (loc.name.equals(sharedPreferences.getString(Constants().USERNAME, "noSharedPref")))
                     draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.green)
                     //drawLocationMarker(R.color.green, loc.name!!)
@@ -81,7 +85,8 @@ class MapFragment : Fragment(), MapEventsReceiver {
             for (shapeLoc in it) {
                 if(shapeLoc.shapeId!! > shapeId){
                     if(shape.size > 0) {
-                        draw(shapeId.toString(), null, null, shape, 0)
+                        //mapMarkers[shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude] = MapMarker(GeoPoint(shapeLoc.latitude,shapeLoc.longitude),true)
+                        draw(shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude, null, null, shape, 0)
                     }
                     shapeId++
                     shape.clear()
@@ -90,7 +95,9 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 shapeLocation = GeoPoint(shapeLoc.latitude, shapeLoc.longitude)
             }
             if(shape.size > 0) {
-                draw(shapeId.toString(), null, null, shape, 0)
+                //mapMarkers[shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude] = MapMarker(GeoPoint(
+                    //shape[0].latitude, shape[0].longitude), true)
+                draw(shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude, null, null, shape, 0)
                 shape.clear()
             }
         })
@@ -99,6 +106,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         (activity as MainActivity).signsLocations.observe(viewLifecycleOwner, {
             for (sign in it) {
                 Log.d("SIGNS", sign.toString())
+                //mapMarkers[sign.signId.toString()+": "+sign.signCode] = MapMarker(GeoPoint(sign.latitude, sign.longitude),true)
                 draw(sign.signId.toString()+": "+sign.signCode,
                     GeoPoint(sign.latitude, sign.longitude), sign.signSVG, null, 0)
                 //drawSignMarker(sign)
@@ -132,30 +140,43 @@ class MapFragment : Fragment(), MapEventsReceiver {
         return view
     }
 
-    private fun removeMarker() {
+    private fun removeMarkers() {
         binding.map.overlays.forEach {
-            binding.map.overlays.remove(it)
+            if(it is Marker && (mapMarkers.containsKey(it.id) && mapMarkers[it.id]?.point?.equals(it.position) == false)){
+                binding.map.overlays.remove(it)
+                mapMarkers.remove(it.id)
+            }else if (it is Polygon && mapMarkers.containsKey(it.id) && mapMarkers[it.id]?.delete==false) {
+                binding.map.overlays.remove(it)
+                mapMarkers.remove(it.id)
+            }
+            else if ((it is Marker && mapMarkers[it.id]?.delete == false)||(it is Polygon && mapMarkers[it.id]?.delete == false)){
+                binding.map.overlays.remove(it)
+            }else if (it is Polygon){
+            mapMarkers[it.id] = MapMarker(mapMarkers[it.id]?.point,false)
+            }
+            else if (it is Marker){
+            mapMarkers[it.id] = MapMarker(mapMarkers[it.id]?.point,false)
+            }
         }
-    }
+        }
+
 
     private fun draw(name: String, position: GeoPoint?, signSvg: String?, polygonArray: MutableList<GeoPoint>?, colorId: Int){
-        binding.map.overlays.forEach {
-            if ((it is Marker)  && !it.position.equals(position) && it.id == name) {
-                binding.map.overlays.remove(it)
-            }
-            if ((it is Polygon) && it.id==name) {
-                binding.map.overlays.remove(it)
-            }
-        }
-        if (polygonArray != null) {
+
+        if(mapMarkers.containsKey(name)){
+            mapMarkers[name] = MapMarker(position,true)
+            return
+        }else {
+            mapMarkers[name] = MapMarker(position,true)
+            if (polygonArray != null) {
                 val polygon = Polygon()
                 polygonArray.add(polygonArray.get(0)) //forces the loop to close(connect last point to first point)
                 polygon.fillPaint.color = Color.parseColor("#1EFFE70E") //set fill color
                 polygon.points = polygonArray
-            polygon.id = name
+                polygon.id = name
                 binding.map.overlayManager.add(polygon)
                 binding.map.invalidate()
-            }else {
+            } else {
                 var icon: Drawable? =
                     ContextCompat.getDrawable(requireContext(), drawable.ic_emoji_people)
                 if (signSvg != null) {
@@ -167,7 +188,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 currentPosMarker.id = name
                 currentPosMarker.position = position
                 Log.d("position", name)
-                if(colorId!=0) {
+                if (colorId != 0) {
                     icon?.setTint(ContextCompat.getColor(requireContext(), colorId))
                 }
                 currentPosMarker.icon = icon
@@ -175,7 +196,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 binding.map.overlays.add(currentPosMarker)
                 binding.map.invalidate()
             }
-
+        }
     }
 
 

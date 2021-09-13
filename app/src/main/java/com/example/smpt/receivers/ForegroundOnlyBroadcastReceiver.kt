@@ -23,6 +23,7 @@ class ForegroundOnlyBroadcastReceiver (val main: MainActivity) : BroadcastReceiv
         val location = intent.getParcelableExtra<Location>(
             ForegroundOnlyLocationService.EXTRA_LOCATION
         )
+        main.removeMarkers.postValue(true);
 
         val apiInterface = RetrofitClient().create()
 
