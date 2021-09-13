@@ -28,10 +28,10 @@ class SignAdapter(context: Context, resource: Int, textResource: Int, objects: A
         txtSign.text = signs[position]
         val img = itemView.findViewById<View>(R.id.imgSign) as ImageView
         when {
-            signs[position] == "sfap________" -> img.setImageResource(R.drawable.sfap________)
-            signs[position] == "shsx________" -> img.setImageResource(R.drawable.shsx________)
-            signs[position] == "sngpu_______" -> img.setImageResource(R.drawable.sngpu_______)
-            signs[position] == "sugpe_____mo" -> img.setImageResource(R.drawable.sugpe_____mo)
+            signs[position] == "SFAP--------" -> img.setImageResource(R.drawable.sfap________)
+            signs[position] == "SHSX--------" -> img.setImageResource(R.drawable.shsx________)
+            signs[position] == "SNGPU-------" -> img.setImageResource(R.drawable.sngpu_______)
+            signs[position] == "SUGPE-----MO" -> img.setImageResource(R.drawable.sugpe_____mo)
         }
         return itemView
     }
