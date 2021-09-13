@@ -16,10 +16,13 @@ jobs:
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'assembleDebug'
+
   - task: AndroidSigning@3
     inputs:
       apkFiles: '**/*.apk'
-      apksign: false
+      apksignerKeystoreFile: 'smptkey.jks'
+      apksignerKeystorePassword: '123456'
+      apksignerKeyPassword: '123456'
       zipalign: false
 
   - task: CopyFiles@2
