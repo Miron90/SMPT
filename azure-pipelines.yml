@@ -20,6 +20,7 @@ jobs:
   - task: AndroidSigning@3
     inputs:
       apkFiles: '**/*.apk'
+      apksignerKeystoreAlias: 'smpt'
       apksignerKeystoreFile: 'smptkey.jks'
       apksignerKeystorePassword: '123456'
       apksignerKeyPassword: '123456'
