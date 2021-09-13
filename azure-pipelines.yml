@@ -22,8 +22,8 @@ jobs:
       apkFiles: '**/*.apk'
       apksignerKeystoreAlias: 'smpt'
       apksignerKeystoreFile: 'smptkey.jks'
-      apksignerKeystorePassword: key.password
-      apksignerKeyPassword: key.password
+      apksignerKeystorePassword: $(key.password)
+      apksignerKeyPassword: $(key.password)
       zipalign: false
 
   - task: CopyFiles@2
