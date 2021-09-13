@@ -34,6 +34,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import java.lang.reflect.Field
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
+import com.example.smpt.ui.dialogs.DialogSign
 
 
 class MapFragment : Fragment(), MapEventsReceiver {
@@ -264,6 +265,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
             tapLocation = GeoPoint(p)
             Toast.makeText(requireContext(), "Tap on (" + p.latitude + "," + p.longitude + ")",
                 Toast.LENGTH_SHORT).show()
+            DialogSign(requireContext())
         }
         return false
     }
