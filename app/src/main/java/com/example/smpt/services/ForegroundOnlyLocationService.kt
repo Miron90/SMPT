@@ -15,6 +15,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.R
+import com.example.smpt.ui.Constants
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -50,11 +51,11 @@ class ForegroundOnlyLocationService : Service() {
 
         locationRequest = LocationRequest.create().apply {
 
-            interval = TimeUnit.MILLISECONDS.toMillis(100)
+            interval = TimeUnit.MILLISECONDS.toMillis(Constants().LOCATION_REQUEST_INTERVAL.toLong())
 
-            fastestInterval = TimeUnit.MILLISECONDS.toMillis(50)
+            fastestInterval = TimeUnit.MILLISECONDS.toMillis(Constants().LOCATION_REQUEST_FASTESTINTERVAL.toLong())
 
-            maxWaitTime = TimeUnit.MILLISECONDS.toMillis(150)
+            maxWaitTime = TimeUnit.MILLISECONDS.toMillis(Constants().LOCATION_REQUEST_MAXWAITTIME.toLong())
 
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
