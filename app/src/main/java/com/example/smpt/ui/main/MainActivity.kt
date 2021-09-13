@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private var foregroundLocationService: ForegroundOnlyLocationService? = null
     private lateinit var foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver
 
+    var removeMarkers = MutableLiveData<Boolean>()
     var userLocations = MutableLiveData<Array<Localization>>()
     var shapeLocations = MutableLiveData<Array<ShapeLocalization>>()
     var signsLocations = MutableLiveData<Array<Sign>>()
