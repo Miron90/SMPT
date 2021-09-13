@@ -108,9 +108,9 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
         Configuration.getInstance()
             .load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
-        Configuration.getInstance().isDebugMapView = true
-        Configuration.getInstance().isDebugMode = true
-        Configuration.getInstance().isDebugTileProviders = true
+//        Configuration.getInstance().isDebugMapView = true
+//        Configuration.getInstance().isDebugMode = true
+//        Configuration.getInstance().isDebugTileProviders = true
 
         binding.map.setTileSource(object : OnlineTileSourceBase(
             "",
