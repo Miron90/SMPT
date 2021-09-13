@@ -58,6 +58,7 @@ class ForegroundOnlyLocationService : Service() {
             maxWaitTime = TimeUnit.MILLISECONDS.toMillis(Constants().LOCATION_REQUEST_MAXWAITTIME.toLong())
 
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
         }
 
         locationCallback = object : LocationCallback() {
