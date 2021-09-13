@@ -26,20 +26,4 @@ interface ApiInterface {
     @GET("api/signs")
     fun getSigns() : Call<Array<Sign>>
 
-    companion object {
-
-        fun create() : ApiInterface {
-
-            val gson = GsonBuilder()
-                .setLenient()
-                .create()
-
-            val retrofit = Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(Constants().BASE_URL)
-                .build()
-            return retrofit.create(ApiInterface::class.java)
-
-        }
-    }
 }

@@ -10,6 +10,7 @@ import com.example.smpt.models.Localization
 import com.example.smpt.models.ShapeLocalization
 import com.example.smpt.models.Sign
 import com.example.smpt.remote.ApiInterface
+import com.example.smpt.remote.RetrofitClient
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.example.smpt.ui.Constants
 import com.example.smpt.ui.main.MainActivity
@@ -23,6 +24,8 @@ class ForegroundOnlyBroadcastReceiver (val main: MainActivity) : BroadcastReceiv
             ForegroundOnlyLocationService.EXTRA_LOCATION
         )
 
+        val apiInterface = RetrofitClient().create()
+
         if (location != null) {
             val latitude = location.latitude
             val longitude = location.longitude
@@ -32,8 +35,7 @@ class ForegroundOnlyBroadcastReceiver (val main: MainActivity) : BroadcastReceiv
 
             val loc = Localization(latitude, longitude, PreferenceManager.getDefaultSharedPreferences(context).getString(Constants().USERNAME, "noSharedPref"))
 
-            val shapeInterface = ApiInterface.create().getShapeLocalization()
-            shapeInterface.enqueue(object : Callback<Array<ShapeLocalization>> {
+            apiInterface.getShapeLocalization().enqueue(object : Callback<Array<ShapeLocalization>> {
                 override fun onResponse(
                     call: Call<Array<ShapeLocalization>>,
                     response: Response<Array<ShapeLocalization>>
@@ -55,9 +57,7 @@ class ForegroundOnlyBroadcastReceiver (val main: MainActivity) : BroadcastReceiv
                 }
             })
 
-
-            val apiInterfacesend = ApiInterface.create().sendLocalization(loc)
-            apiInterfacesend.enqueue(object : Callback<String> {
+            apiInterface.sendLocalization(loc).enqueue(object : Callback<String> {
                 override fun onResponse(
                     call: Call<String>,
                     response: Response<String>
@@ -73,8 +73,8 @@ class ForegroundOnlyBroadcastReceiver (val main: MainActivity) : BroadcastReceiv
                     Log.d("API", "Error" + t.toString())
                 }
             })
-            val apiInterface = ApiInterface.create().getLocalization()
-            apiInterface.enqueue(object : Callback<Array<Localization>> {
+
+            apiInterface.getLocalization().enqueue(object : Callback<Array<Localization>> {
                 override fun onResponse(
                     call: Call<Array<Localization>>,
                     response: Response<Array<Localization>>
@@ -97,9 +97,7 @@ class ForegroundOnlyBroadcastReceiver (val main: MainActivity) : BroadcastReceiv
             })
             Log.d("API", apiInterface.toString())
 
-
-            val signInterface = ApiInterface.create().getSigns()
-            signInterface.enqueue(object : Callback<Array<Sign>> {
+            apiInterface.getSigns().enqueue(object : Callback<Array<Sign>> {
                 override fun onResponse(
                     call: Call<Array<Sign>>,
                     response: Response<Array<Sign>>
