@@ -149,8 +149,12 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 binding.map.overlays.remove(it)
                 mapMarkers.remove(it.id)
             }
-            else if ((it is Marker && mapMarkers[it.id]?.delete == false)||(it is Polygon && mapMarkers[it.id]?.delete == false)){
+            else if ((it is Marker && mapMarkers[it.id]?.delete == false)){
                 binding.map.overlays.remove(it)
+                mapMarkers.remove(it.id)
+            }else if((it is Polygon && mapMarkers[it.id]?.delete == false)){
+                binding.map.overlays.remove(it)
+                mapMarkers.remove(it.id)
             }else if (it is Polygon){
             mapMarkers[it.id] = MapMarker(mapMarkers[it.id]?.point,false)
             }
