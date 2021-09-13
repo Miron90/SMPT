@@ -34,6 +34,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
 import com.example.smpt.models.MapMarker
+import com.example.smpt.ui.dialogs.DialogSign
 
 
 class MapFragment : Fragment(), MapEventsReceiver {
@@ -259,7 +260,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
     //funkcja od interfejsu MapRecievera (klik na mape)
     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        Toast.makeText(requireContext(), "Tapped", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(), "Tapped", Toast.LENGTH_SHORT).show()
         return true
     }
 
@@ -267,8 +268,8 @@ class MapFragment : Fragment(), MapEventsReceiver {
     override fun longPressHelper(p: GeoPoint?): Boolean {
         if (p != null) {
             tapLocation = GeoPoint(p)
-            Toast.makeText(requireContext(), "Tap on (" + p.latitude + "," + p.longitude + ")",
-                Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), "Tap on (" + p.latitude + "," + p.longitude + ")", Toast.LENGTH_SHORT).show()
+            DialogSign(requireContext(), tapLocation)
         }
         return false
     }

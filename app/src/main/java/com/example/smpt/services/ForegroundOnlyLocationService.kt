@@ -58,6 +58,7 @@ class ForegroundOnlyLocationService : Service() {
             maxWaitTime = TimeUnit.MILLISECONDS.toMillis(Constants().LOCATION_REQUEST_MAXWAITTIME.toLong())
 
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
         }
 
         locationCallback = object : LocationCallback() {
@@ -112,14 +113,6 @@ class ForegroundOnlyLocationService : Service() {
 
     override fun onUnbind(intent: Intent): Boolean {
         Log.d("Location", "onUnbind()")
-
-//        if (!configurationChange) {
-//            Log.d("Location", "Start foreground service")
-//            val notification = generateNotification(currentLocation)
-//            startForeground(NOTIFICATION_ID, notification)
-//            serviceRunningInForeground = true
-//        }
-
         return true
     }
 
