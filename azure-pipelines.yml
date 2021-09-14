@@ -16,7 +16,7 @@ jobs:
       publishJUnitResults: false
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'assembleDebug'
-
+  - task: gitversion/execute@0
   - task: AndroidSigning@3
     inputs:
       apkFiles: '**/*.apk'
