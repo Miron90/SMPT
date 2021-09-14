@@ -26,6 +26,8 @@ import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
+import org.koin.android.ext.android.inject
+import org.koin.core.context.GlobalContext.get
 
 class MainActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
@@ -37,12 +39,8 @@ class MainActivity : AppCompatActivity() {
 
     private var foregroundLocationServiceBound = false
     private var foregroundLocationService: ForegroundOnlyLocationService? = null
-    private lateinit var foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver
+    private val foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver by inject()
 
-    var removeMarkers = MutableLiveData<Boolean>()
-    var userLocations = MutableLiveData<Array<Localization>>()
-    var shapeLocations = MutableLiveData<Array<ShapeLocalization>>()
-    var signsLocations = MutableLiveData<Array<Sign>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, MainViewModelFactory())
             .get(MainViewModel::class.java)
 
-        foregroundBroadcastReceiver = ForegroundOnlyBroadcastReceiver(this)
         registerReceiver(foregroundBroadcastReceiver, IntentFilter())
 
         Log.d("Location", foregroundPermissionApproved().toString())

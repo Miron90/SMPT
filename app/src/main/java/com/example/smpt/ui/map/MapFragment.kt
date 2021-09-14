@@ -34,7 +34,9 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
 import com.example.smpt.models.MapMarker
+import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.ui.dialogs.DialogSign
+import org.koin.android.ext.android.inject
 
 
 class MapFragment : Fragment(), MapEventsReceiver {
@@ -46,6 +48,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
     private var mapMarkers: MutableMap<String, MapMarker> = HashMap()
     lateinit var shapeLocation: GeoPoint
     private lateinit var tapLocation: GeoPoint
+    private val foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver by inject()
 
     var mapEventsOverlay = MapEventsOverlay(this)
     private lateinit var sharedPreferences: SharedPreferences
@@ -63,12 +66,11 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        (activity as MainActivity).removeMarkers.observe(viewLifecycleOwner,{
+        foregroundBroadcastReceiver.removeMarkers.observe(viewLifecycleOwner,{
             removeMarkers()
         })
-
             //observer od lokalizacji uzytkownikow
-        (activity as MainActivity).userLocations.observe(viewLifecycleOwner, {
+        foregroundBroadcastReceiver.userLocations.observe(viewLifecycleOwner, {
             for (loc in it) {
                 //mapMarkers[loc.name!!] = MapMarker(GeoPoint(loc.latitude, loc.longitude),true)
                 if (loc.name.equals(sharedPreferences.getString(Constants().USERNAME, "noSharedPref")))
@@ -80,7 +82,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
             }
         })
 
-        (activity as MainActivity).shapeLocations.observe(viewLifecycleOwner, {
+        foregroundBroadcastReceiver.shapeLocations.observe(viewLifecycleOwner, {
             var shapeId = 0
             val shape: MutableList<GeoPoint> = ArrayList<GeoPoint>()
             for (shapeLoc in it) {
@@ -104,7 +106,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         })
 
 
-        (activity as MainActivity).signsLocations.observe(viewLifecycleOwner, {
+        foregroundBroadcastReceiver.signsLocations.observe(viewLifecycleOwner, {
             for (sign in it) {
                 Log.d("SIGNS", sign.toString())
                 //mapMarkers[sign.signId.toString()+": "+sign.signCode] = MapMarker(GeoPoint(sign.latitude, sign.longitude),true)
