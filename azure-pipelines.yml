@@ -17,6 +17,8 @@ jobs:
       testResultsFiles: '**/TEST-*.xml'
       tasks: 'assembleDebug'
   - task: gitversion/execute@0
+    inputs:
+        configFilePath: 'GitVersion.yml'
   - task: AndroidSigning@3
     inputs:
       apkFiles: '**/*.apk'
