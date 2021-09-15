@@ -46,6 +46,7 @@ class ForegroundOnlyBroadcastReceiver (private val api: ApiInterface, private va
                     response: Response<Array<ShapeLocalization>>
                 ) {
                     if (response.body() != null) {
+                        Log.d("works xddd",response.body()!!.toString())
                         shapeLocations.postValue(response.body()!!)
                         for (shapeLoc in response.body()!!) {
                             Log.d("API", "shape work$shapeLoc")

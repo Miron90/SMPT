@@ -80,16 +80,17 @@ class MapFragment : Fragment(), MapEventsReceiver {
         })
 
         foregroundBroadcastReceiver.shapeLocations.observe(viewLifecycleOwner, {
-            var shapeId = 0
+            var shapeId = it.get(0).shapeId
             val shape: MutableList<GeoPoint> = ArrayList<GeoPoint>()
             for (shapeLoc in it) {
-                if(shapeLoc.shapeId!! > shapeId){
+                if(shapeLoc.shapeId!! > shapeId!!){
                     if(shape.size > 0) {
                         //mapMarkers[shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude] = MapMarker(GeoPoint(shapeLoc.latitude,shapeLoc.longitude),true)
                         draw(shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude, null, null, shape, 0)
                     }
                     shapeId++
                     shape.clear()
+
                 }
                 shape.add(GeoPoint(shapeLoc.latitude, shapeLoc.longitude))
                 shapeLocation = GeoPoint(shapeLoc.latitude, shapeLoc.longitude)
@@ -173,6 +174,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         }else {
             mapMarkers[name] = MapMarker(position,true)
             if (polygonArray != null) {
+                Log.d("works",polygonArray.toString())
                 val polygon = Polygon()
                 polygonArray.add(polygonArray[0]) //forces the loop to close(connect last point to first point)
                 polygon.fillPaint.color = Color.parseColor("#1EFFE70E") //set fill color
