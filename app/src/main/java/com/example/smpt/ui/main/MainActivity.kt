@@ -8,26 +8,20 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
-import androidx.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
 import com.example.smpt.databinding.ActivityMainBinding
-import com.example.smpt.models.Localization
-import com.example.smpt.models.ShapeLocalization
-import com.example.smpt.models.Sign
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
-import org.koin.core.context.GlobalContext.get
+import org.koin.android.ext.android.get
 
 class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
@@ -45,8 +39,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this, MainViewModelFactory())
-            .get(MainViewModel::class.java)
+        viewModel = get()
 
         registerReceiver(foregroundBroadcastReceiver, IntentFilter())
 

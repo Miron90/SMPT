@@ -17,12 +17,9 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.Polygon
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.R
 import com.example.smpt.R.drawable
 import com.example.smpt.ui.Constants
@@ -37,6 +34,7 @@ import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.MapMarker
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.ui.dialogs.DialogSign
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 
@@ -62,8 +60,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        viewModel = ViewModelProvider(this, MapViewModelFactory())
-            .get(MapViewModel::class.java)
+        viewModel = get()
 
 
         foregroundBroadcastReceiver.removeMarkers.observe(viewLifecycleOwner,{
