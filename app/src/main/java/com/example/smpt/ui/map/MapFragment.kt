@@ -33,6 +33,7 @@ import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
+import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.MapMarker
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.ui.dialogs.DialogSign
@@ -51,7 +52,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
     private val foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver by inject()
 
     var mapEventsOverlay = MapEventsOverlay(this)
-    private lateinit var sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferencesStorage by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +65,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
         viewModel = ViewModelProvider(this, MapViewModelFactory())
             .get(MapViewModel::class.java)
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         foregroundBroadcastReceiver.removeMarkers.observe(viewLifecycleOwner,{
             removeMarkers()
@@ -73,7 +73,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         foregroundBroadcastReceiver.userLocations.observe(viewLifecycleOwner, {
             for (loc in it) {
                 //mapMarkers[loc.name!!] = MapMarker(GeoPoint(loc.latitude, loc.longitude),true)
-                if (loc.name.equals(sharedPreferences.getString(Constants().USERNAME, "noSharedPref")))
+                if (loc.name.equals(sharedPreferences.getString(Constants().USERNAME)))
                     draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.green)
                     //drawLocationMarker(R.color.green, loc.name!!)
                 else
@@ -177,7 +177,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
             mapMarkers[name] = MapMarker(position,true)
             if (polygonArray != null) {
                 val polygon = Polygon()
-                polygonArray.add(polygonArray.get(0)) //forces the loop to close(connect last point to first point)
+                polygonArray.add(polygonArray[0]) //forces the loop to close(connect last point to first point)
                 polygon.fillPaint.color = Color.parseColor("#1EFFE70E") //set fill color
                 polygon.points = polygonArray
                 polygon.id = name
@@ -205,8 +205,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
             }
         }
     }
-
-
 
     override fun onResume() {
         super.onResume();

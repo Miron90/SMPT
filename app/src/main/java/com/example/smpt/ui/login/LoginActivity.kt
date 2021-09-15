@@ -2,12 +2,11 @@ package com.example.smpt.ui.login
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.databinding.ActivityLoginBinding
 import com.example.smpt.ui.main.MainActivity
+import org.koin.android.ext.android.get
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var viewModel: LoginViewModel
@@ -19,9 +18,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this,
-            LoginViewModelFactory(PreferenceManager.getDefaultSharedPreferences(this)))
-            .get(LoginViewModel::class.java)
+        viewModel = get()
 
         viewModel.success.observe(this, {
             if(it)

@@ -30,7 +30,6 @@ import org.koin.android.ext.android.inject
 import org.koin.core.context.GlobalContext.get
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var sharedPreferences: SharedPreferences
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -72,7 +71,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         LocalBroadcastManager.getInstance(this).registerReceiver(
             foregroundBroadcastReceiver,
             IntentFilter(

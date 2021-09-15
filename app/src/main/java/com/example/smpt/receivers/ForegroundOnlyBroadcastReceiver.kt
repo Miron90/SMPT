@@ -6,20 +6,18 @@ import android.content.Intent
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.preference.PreferenceManager
+import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.Localization
 import com.example.smpt.models.ShapeLocalization
 import com.example.smpt.models.Sign
 import com.example.smpt.remote.ApiInterface
-import com.example.smpt.remote.RetrofitClient
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.example.smpt.ui.Constants
-import com.example.smpt.ui.main.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ForegroundOnlyBroadcastReceiver (val api: ApiInterface) : BroadcastReceiver() {
+class ForegroundOnlyBroadcastReceiver (private val api: ApiInterface, private val sharedPreferences: SharedPreferencesStorage) : BroadcastReceiver() {
     val removeMarkers = MutableLiveData<Boolean>()
     val shapeLocations = MutableLiveData<Array<ShapeLocalization>>()
     val userLocations = MutableLiveData<Array<Localization>>()
@@ -40,7 +38,7 @@ class ForegroundOnlyBroadcastReceiver (val api: ApiInterface) : BroadcastReceive
 
             Log.d("API", "sending data")
 
-            val loc = Localization(latitude, longitude, PreferenceManager.getDefaultSharedPreferences(context).getString(Constants().USERNAME, "noSharedPref"))
+            val loc = Localization(latitude, longitude, sharedPreferences.getString(Constants().USERNAME))
 
             apiInterface.getShapeLocalization().enqueue(object : Callback<Array<ShapeLocalization>> {
                 override fun onResponse(
