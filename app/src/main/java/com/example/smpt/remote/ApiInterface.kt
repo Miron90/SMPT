@@ -23,6 +23,9 @@ interface ApiInterface {
     @GET("api/signs")
     fun getSigns() : Call<Array<Sign>>
 
+    @GET("api/signs/order")
+    fun getSignOrderBy(): Call<Array<Sign>>
+
     @POST("api/signs")
     fun sendSign(@Body signUploadDto: SignUploadDto): Call<String>
 }
