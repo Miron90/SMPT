@@ -10,15 +10,14 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.Spinner
 import com.example.smpt.R
-import com.example.smpt.models.ShapeLocalization
 import com.example.smpt.models.SignUploadDto
-import com.example.smpt.remote.RetrofitClient
+import com.example.smpt.remote.ApiInterface
 import org.osmdroid.util.GeoPoint
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DialogSign(context: Context, private val location: GeoPoint) {
+class DialogSign(context: Context, private val location: GeoPoint, private val apiInterface: ApiInterface) {
     private val dialog = Dialog(context)
 
     init {
@@ -51,7 +50,6 @@ class DialogSign(context: Context, private val location: GeoPoint) {
         spinner.adapter = adapter
 
         button.setOnClickListener {
-            val apiInterface = RetrofitClient().create()
             apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
                 override fun onResponse(
                     call: Call<String>,

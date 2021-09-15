@@ -33,6 +33,7 @@ import com.caverock.androidsvg.SVG
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.MapMarker
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
+import com.example.smpt.remote.ApiInterface
 import com.example.smpt.ui.dialogs.DialogSign
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
@@ -51,6 +52,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
     var mapEventsOverlay = MapEventsOverlay(this)
     private val sharedPreferences: SharedPreferencesStorage by inject()
+    private val apiInterface: ApiInterface by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,7 +76,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
                     draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.green)
                     //drawLocationMarker(R.color.green, loc.name!!)
                 else
-                    draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.teal_200)
+                    draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.blue)
                     //drawLocationMarker(R.color.teal_200, loc.name!!)
             }
         })
@@ -268,7 +270,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         if (p != null) {
             tapLocation = GeoPoint(p)
             //Toast.makeText(requireContext(), "Tap on (" + p.latitude + "," + p.longitude + ")", Toast.LENGTH_SHORT).show()
-            DialogSign(requireContext(), tapLocation)
+            DialogSign(requireContext(), tapLocation, apiInterface)
         }
         return false
     }
