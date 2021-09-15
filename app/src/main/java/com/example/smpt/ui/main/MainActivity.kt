@@ -8,27 +8,22 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
-import androidx.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
 import com.example.smpt.databinding.ActivityMainBinding
-import com.example.smpt.models.Localization
-import com.example.smpt.models.ShapeLocalization
-import com.example.smpt.models.Sign
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.android.get
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var sharedPreferences: SharedPreferences
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -37,21 +32,15 @@ class MainActivity : AppCompatActivity() {
 
     private var foregroundLocationServiceBound = false
     private var foregroundLocationService: ForegroundOnlyLocationService? = null
-    private lateinit var foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver
+    private val foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver by inject()
 
-    var removeMarkers = MutableLiveData<Boolean>()
-    var userLocations = MutableLiveData<Array<Localization>>()
-    var shapeLocations = MutableLiveData<Array<ShapeLocalization>>()
-    var signsLocations = MutableLiveData<Array<Sign>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this, MainViewModelFactory())
-            .get(MainViewModel::class.java)
+        viewModel = get()
 
-        foregroundBroadcastReceiver = ForegroundOnlyBroadcastReceiver(this)
         registerReceiver(foregroundBroadcastReceiver, IntentFilter())
 
         Log.d("Location", foregroundPermissionApproved().toString())
@@ -75,7 +64,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         LocalBroadcastManager.getInstance(this).registerReceiver(
             foregroundBroadcastReceiver,
             IntentFilter(

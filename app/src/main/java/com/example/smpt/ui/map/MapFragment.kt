@@ -17,12 +17,9 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.Polygon
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.example.smpt.R
 import com.example.smpt.R.drawable
 import com.example.smpt.ui.Constants
@@ -33,8 +30,12 @@ import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
+import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.MapMarker
+import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.ui.dialogs.DialogSign
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 
 
 class MapFragment : Fragment(), MapEventsReceiver {
@@ -46,9 +47,10 @@ class MapFragment : Fragment(), MapEventsReceiver {
     private var mapMarkers: MutableMap<String, MapMarker> = HashMap()
     lateinit var shapeLocation: GeoPoint
     private lateinit var tapLocation: GeoPoint
+    private val foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver by inject()
 
     var mapEventsOverlay = MapEventsOverlay(this)
-    private lateinit var sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferencesStorage by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,20 +60,17 @@ class MapFragment : Fragment(), MapEventsReceiver {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        viewModel = ViewModelProvider(this, MapViewModelFactory())
-            .get(MapViewModel::class.java)
+        viewModel = get()
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        (activity as MainActivity).removeMarkers.observe(viewLifecycleOwner,{
+        foregroundBroadcastReceiver.removeMarkers.observe(viewLifecycleOwner,{
             removeMarkers()
         })
-
             //observer od lokalizacji uzytkownikow
-        (activity as MainActivity).userLocations.observe(viewLifecycleOwner, {
+        foregroundBroadcastReceiver.userLocations.observe(viewLifecycleOwner, {
             for (loc in it) {
                 //mapMarkers[loc.name!!] = MapMarker(GeoPoint(loc.latitude, loc.longitude),true)
-                if (loc.name.equals(sharedPreferences.getString(Constants().USERNAME, "noSharedPref")))
+                if (loc.name.equals(sharedPreferences.getString(Constants().USERNAME)))
                     draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.green)
                     //drawLocationMarker(R.color.green, loc.name!!)
                 else
@@ -80,7 +79,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
             }
         })
 
-        (activity as MainActivity).shapeLocations.observe(viewLifecycleOwner, {
+        foregroundBroadcastReceiver.shapeLocations.observe(viewLifecycleOwner, {
             var shapeId = 0
             val shape: MutableList<GeoPoint> = ArrayList<GeoPoint>()
             for (shapeLoc in it) {
@@ -104,7 +103,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         })
 
 
-        (activity as MainActivity).signsLocations.observe(viewLifecycleOwner, {
+        foregroundBroadcastReceiver.signsLocations.observe(viewLifecycleOwner, {
             for (sign in it) {
                 Log.d("SIGNS", sign.toString())
                 //mapMarkers[sign.signId.toString()+": "+sign.signCode] = MapMarker(GeoPoint(sign.latitude, sign.longitude),true)
@@ -175,7 +174,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
             mapMarkers[name] = MapMarker(position,true)
             if (polygonArray != null) {
                 val polygon = Polygon()
-                polygonArray.add(polygonArray.get(0)) //forces the loop to close(connect last point to first point)
+                polygonArray.add(polygonArray[0]) //forces the loop to close(connect last point to first point)
                 polygon.fillPaint.color = Color.parseColor("#1EFFE70E") //set fill color
                 polygon.points = polygonArray
                 polygon.id = name
@@ -203,8 +202,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
             }
         }
     }
-
-
 
     override fun onResume() {
         super.onResume();
