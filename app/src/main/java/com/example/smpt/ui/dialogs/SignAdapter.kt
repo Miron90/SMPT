@@ -2,20 +2,23 @@ package com.example.smpt.ui.dialogs
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.PictureDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.caverock.androidsvg.SVG
 import com.example.smpt.R
+import com.example.smpt.models.Sign
 
 
-class SignAdapter(context: Context, resource: Int, textResource: Int, objects: ArrayList<String>)
-    : ArrayAdapter<String>(context, resource, textResource, objects) {
+class SignAdapter(context: Context, resource: Int, textResource: Int, objects: Array<Sign>)
+    : ArrayAdapter<Sign>(context, resource, textResource, objects) {
 
     //String[] objects;
-    var signs = arrayListOf("")
+    var signs: Array<Sign>
 
     init {
         signs = objects
@@ -25,14 +28,16 @@ class SignAdapter(context: Context, resource: Int, textResource: Int, objects: A
 
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_sign, parent, false);
         val txtSign = itemView.findViewById<View>(R.id.txtSign) as TextView
-        txtSign.text = signs[position]
+        txtSign.text = signs[position].signCode
         val img = itemView.findViewById<View>(R.id.imgSign) as ImageView
-        when {
-            signs[position] == "SFAP--------" -> img.setImageResource(R.drawable.sfap________)
-            signs[position] == "SHSX--------" -> img.setImageResource(R.drawable.shsx________)
-            signs[position] == "SNGPU-------" -> img.setImageResource(R.drawable.sngpu_______)
-            signs[position] == "SUGPE-----MO" -> img.setImageResource(R.drawable.sugpe_____mo)
-        }
+        img.setImageDrawable(
+            PictureDrawable(SVG.getFromString(signs[position].signSVG).renderToPicture()))
+//        when {
+//            signs[position].signCode == "SFAP--------" -> img.setImageResource(R.drawable.sfap________)
+//            signs[position].signCode == "SHSX--------" -> img.setImageResource(R.drawable.shsx________)
+//            signs[position].signCode == "SNGPU-------" -> img.setImageResource(R.drawable.sngpu_______)
+//            signs[position].signCode == "SUGPE-----MO" -> img.setImageResource(R.drawable.sugpe_____mo)
+//        }
         return itemView
     }
 

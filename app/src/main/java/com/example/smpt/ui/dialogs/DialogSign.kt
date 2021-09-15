@@ -10,6 +10,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.Spinner
 import com.example.smpt.R
+import com.example.smpt.models.Sign
 import com.example.smpt.models.SignUploadDto
 import com.example.smpt.remote.ApiInterface
 import org.osmdroid.util.GeoPoint
@@ -28,16 +29,42 @@ class DialogSign(context: Context, private val location: GeoPoint, private val a
     private fun build() {
         dialog.setContentView(R.layout.dialog_sign)
 //        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        var signs: Array<Sign>? = null
+        apiInterface.getSignOrderBy().enqueue(object : Callback<Array<Sign>> {
+            override fun onResponse(
+                call: Call<Array<Sign>>,
+                response: Response<Array<Sign>>
+            ) {
+                if (response.body() != null) {
+                    Log.d(
+                        "API",
+                        "send sign" + response.message()
+                    )
 
-        val items = arrayListOf("SFAP--------", "SHSX--------", "SNGPU-------", "SUGPE-----MO")
+                    signs = response.body()!!
+                    config(signs!!)
+                }
+                Log.d("API", "send sign" + response.message())
+            }
+
+            override fun onFailure(call: Call<Array<Sign>>?, t: Throwable?) {
+                Log.d("API", "Error" + t.toString())
+            }
+        })
+
+
+    }
+
+    private fun config(signs: Array<Sign>){
+//        val items = arrayListOf("SFAP--------", "SHSX--------", "SNGPU-------", "SUGPE-----MO")
         val spinner = dialog.findViewById(R.id.spinnerSigns) as Spinner
-        val adapter = SignAdapter(dialog.context, R.layout.item_sign, R.id.txtSign, items)
+        val adapter = SignAdapter(dialog.context, R.layout.item_sign, R.id.txtSign, signs)
         val button = dialog.findViewById(R.id.btnDialog) as Button
         var signCode = ""
 
         spinner.onItemSelectedListener = object: OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                signCode = items[p2]
+                signCode = signs?.get(p2)!!.signCode
                 //dialog.dismiss()
             }
 
