@@ -270,7 +270,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
         if (p != null) {
             tapLocation = GeoPoint(p)
             //Toast.makeText(requireContext(), "Tap on (" + p.latitude + "," + p.longitude + ")", Toast.LENGTH_SHORT).show()
-            DialogSign(requireContext(), tapLocation, apiInterface)
+            DialogSign(requireContext(), tapLocation, apiInterface, sharedPreferences)
         }
         return false
     }

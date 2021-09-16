@@ -17,7 +17,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DialogSign(context: Context, private val location: GeoPoint, private val apiInterface: ApiInterface) {
+class DialogSign(
+    context: Context,
+    private val location: GeoPoint,
+    private val apiInterface: ApiInterface,
+    private val sharedPreferencesStorage: SharedPreferencesStorage)
+{
     private val dialog = Dialog(context)
 
     init {
@@ -55,8 +60,7 @@ class DialogSign(context: Context, private val location: GeoPoint, private val a
 
     }
 
-    private fun config(signs: Array<Sign>){
-//        val items = arrayListOf("SFAP--------", "SHSX--------", "SNGPU-------", "SUGPE-----MO")
+    private fun setSigns(signs: Array<Sign>){
         val spinner = dialog.findViewById(R.id.spinnerSigns) as Spinner
         val adapter = SignAdapter(dialog.context, R.layout.item_sign, R.id.txtSign, signs)
         val button = dialog.findViewById(R.id.btnDialog) as Button
@@ -64,7 +68,7 @@ class DialogSign(context: Context, private val location: GeoPoint, private val a
 
         spinner.onItemSelectedListener = object: OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                signCode = signs?.get(p2)!!.signCode
+                signCode = signs[p2].signCode
                 //dialog.dismiss()
             }
 
