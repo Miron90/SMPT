@@ -12,4 +12,5 @@
     <color name="buttonBackgroundDisabled">#C8C8C8</color>
     <color name="buttonTextDisabled">#969696</color>
     <color name="darkGreenTransparent">#4D1B5E20</color>
+    <color name="blue">#0288D1</color>
 </resources>

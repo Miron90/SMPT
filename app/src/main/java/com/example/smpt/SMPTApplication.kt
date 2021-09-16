@@ -32,7 +32,7 @@ class SMPTApplication : Application() {
         single { ForegroundOnlyBroadcastReceiver(get(), get()) }
 
         factory { MapViewModel() }
-        factory { MainViewModel() }
+        factory { MainViewModel(get(), get()) }
         factory { LoginViewModel(get()) }
     }
 }
