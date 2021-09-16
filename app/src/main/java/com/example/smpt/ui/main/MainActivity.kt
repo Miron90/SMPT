@@ -16,12 +16,16 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
 import com.example.smpt.databinding.ActivityMainBinding
+import com.example.smpt.models.Sign
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.android.get
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
@@ -40,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel = get()
+        viewModel.downloadSigns()
 
         registerReceiver(foregroundBroadcastReceiver, IntentFilter())
 
