@@ -10,6 +10,8 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.Spinner
 import com.example.smpt.R
+import com.example.smpt.SharedPreferencesStorage
+import com.example.smpt.models.Sign
 import com.example.smpt.models.SignUploadDto
 import com.example.smpt.remote.ApiInterface
 import org.osmdroid.util.GeoPoint
@@ -32,32 +34,8 @@ class DialogSign(
 
     private fun build() {
         dialog.setContentView(R.layout.dialog_sign)
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        var signs: Array<Sign>? = null
-        val apiInterface = RetrofitClient().create()
-        apiInterface.getSignOrderBy().enqueue(object : Callback<Array<Sign>> {
-            override fun onResponse(
-                call: Call<Array<Sign>>,
-                response: Response<Array<Sign>>
-            ) {
-                if (response.body() != null) {
-                    Log.d(
-                        "API",
-                        "send sign" + response.message()
-                    )
-
-                    signs = response.body()!!
-                    config(signs!!)
-                }
-                Log.d("API", "send sign" + response.message())
-            }
-
-            override fun onFailure(call: Call<Array<Sign>>?, t: Throwable?) {
-                Log.d("API", "Error" + t.toString())
-            }
-        })
-
-
+        val signs = sharedPreferencesStorage.getSigns()
+        setSigns(signs)
     }
 
     private fun setSigns(signs: Array<Sign>){
@@ -100,5 +78,6 @@ class DialogSign(
 
             dialog.dismiss()
         }
+
     }
 }
