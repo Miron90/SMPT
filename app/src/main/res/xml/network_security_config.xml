@@ -2,7 +2,9 @@
 <network-security-config>
     <domain-config>
         <domain includeSubdomains="true">172.16.35.152</domain>
+        <trust-anchors>
             <certificates src="@raw/child"/>
             <certificates src="system"/>
+        </trust-anchors>
     </domain-config>
 </network-security-config>

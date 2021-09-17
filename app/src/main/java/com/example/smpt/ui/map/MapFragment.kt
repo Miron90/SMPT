@@ -39,6 +39,9 @@ import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 
+
+
+
 class MapFragment : Fragment(), MapEventsReceiver {
 
     private var _binding: FragmentMapBinding? = null
@@ -118,9 +121,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
         Configuration.getInstance()
             .load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
-//        Configuration.getInstance().isDebugMapView = true
-//        Configuration.getInstance().isDebugMode = true
-//        Configuration.getInstance().isDebugTileProviders = true
+
 
         binding.map.setTileSource(object : OnlineTileSourceBase(
             "",
@@ -130,6 +131,8 @@ class MapFragment : Fragment(), MapEventsReceiver {
             "",
             arrayOf(Constants().TILE_URL)
         ) {
+
+
             override fun getTileURLString(pMapTileIndex: Long): String {
                 return (baseUrl
                         + MapTileIndex.getZoom(pMapTileIndex)

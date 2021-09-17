@@ -50,7 +50,8 @@ class RetrofitClient {
 
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(keyManagerFactory.keyManagers, arrayOf(trusted), SecureRandom())
-
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
+        HttpsURLConnection.setDefaultHostnameVerifier{ p0, p1 -> true }
         httpsClientBuilder.sslSocketFactory(sslContext.socketFactory, trusted as X509TrustManager)
 
         return httpsClientBuilder.hostnameVerifier { p0, p1 -> true }.build()
