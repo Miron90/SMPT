@@ -33,11 +33,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.btnLogin.setOnClickListener {
-            attemptLogin(binding.inputLogin.text.toString())
+            attemptLogin(binding.inputLogin.text.toString(), binding.inputCert.text.toString())
         }
     }
 
-    private fun attemptLogin(login: String) {
-        viewModel.attemptLogin(login)
+    private fun attemptLogin(login: String, cert: String) {
+        viewModel.attemptLogin(login, cert)
     }
 }
