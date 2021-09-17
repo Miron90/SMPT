@@ -28,7 +28,7 @@ class SMPTApplication : Application() {
     private val appModule = module {
 
         single { SharedPreferencesStorage(this@SMPTApplication) }
-        single { RetrofitClient().create() }
+        single { RetrofitClient().create(this@SMPTApplication, get()) }
         single { ForegroundOnlyBroadcastReceiver(get(), get()) }
 
         factory { MapViewModel() }

@@ -7,6 +7,15 @@ class SharedPreferencesStorage (context: Context) {
     private val sharedPreferences = context.getSharedPreferences("", Context.MODE_PRIVATE)
 
     private lateinit var signs: Array<Sign>
+    private var certPassword = "1234"
+
+    fun setCertPassword(password: String) {
+        certPassword = password
+    }
+
+    fun getCertPassword(): String {
+        return certPassword
+    }
 
     fun setSigns(signsArray: Array<Sign>) {
         signs = signsArray
