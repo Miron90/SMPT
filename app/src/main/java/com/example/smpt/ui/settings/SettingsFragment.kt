@@ -51,8 +51,20 @@ class SettingsFragment : Fragment() {
 
         var adapter1 = SpinnerColorAdapter(requireContext(), R.layout.item_color, R.id.name, colors)
         var adapter2 = SpinnerColorAdapter(requireContext(), R.layout.item_color, R.id.name, colors)
+        var ownColorSelection = 0
+        var otherColorSelection = 0
 
         binding.spinnerOtherColor.adapter = adapter1
+
+        for (i in 0 until colors.count()) {
+            if(sharedPreferences.getOtherMarkerColor() == colors[i].id)
+                otherColorSelection = i
+            if(sharedPreferences.getOwnMarkerColor() == colors[i].id)
+                ownColorSelection = i
+        }
+
+        binding.spinnerOtherColor.setSelection(otherColorSelection)
+        binding.spinnerOwnColor.setSelection(ownColorSelection)
         binding.spinnerOwnColor.adapter = adapter2
 
         binding.spinnerOtherColor.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
