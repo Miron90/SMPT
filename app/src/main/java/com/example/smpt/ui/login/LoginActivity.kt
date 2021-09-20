@@ -69,26 +69,16 @@ class LoginActivity : AppCompatActivity(), KeyChainAliasCallback {
     }
 
     private fun attemptLogin(login: String, alias:String) {
-        Log.d("kluczyk", alias)
-        var privateKey: PrivateKey? =null
-        var chain:Array<X509Certificate>?
+
         Thread {
             if (isKeyChainAccessible()) {
-                // Key chain installed. Disable the install button and print
-                // the key chain information
-                    sharedPreferences.setAlias(alias)
+                sharedPreferences.setAlias(alias)
                 printInfo()
             } else {
                 Log.d("kluczyk", "Key Chain is not accessible")
             }
         }.start()
-//        var keyGainer = KeyGainer(this, alias)
-//        var threa = Thread(keyGainer)
-//        threa.start()
-//        threa.join()
-//        privateKey=keyGainer.getKey()
 
-        Log.d("kluczyk", privateKey.toString())
         viewModel.attemptLogin(login)
     private fun attemptLogin(login: String, cert: String) {
         viewModel.attemptLogin(login, cert)
@@ -96,33 +86,19 @@ class LoginActivity : AppCompatActivity(), KeyChainAliasCallback {
 
     override fun alias(alias: String?) {
         if (alias != null) {
-            setAlias(alias); // Set the alias in the application preference
+            this.alias=alias
             printInfo();
         } else {
             Log.d("kluczyk", "User hit Disallow");
         }
-    }
-
-    private fun setAlias(alias: String) {
-        this.alias=alias
     }
     private fun printInfo() {
         val alias: String = this.alias
         val certs = getCertificateChain(alias)
         val privateKey = getPrivateKey(alias)
         sharedPreferences.setChain(certs!!)
+        sharedPreferences.setAlias(this.alias)
         sharedPreferences.setKey(privateKey!!)
-        val sb = StringBuffer()
-        for (cert in certs!!) {
-            sb.append(cert?.issuerDN)
-            sb.append("\n")
-        }
-        runOnUiThread {
-//            val certTv = findViewById<View>(R.id.cert) as TextView
-//            val privateKeyTv = findViewById<View>(R.id.private_key) as TextView
-            Log.d("kluczyk123", sb.toString());
-            Log.d("kluczyk1234", privateKey!!.format + ":" + privateKey);
-        }
     }
     private fun getCertificateChain(alias: String): Array<X509Certificate?>? {
         try {

@@ -55,23 +55,6 @@ class RetrofitClient {
             .connectTimeout(60,TimeUnit.SECONDS)
 
         val trusted = CustomTrustManager()
-        val caFileInputStream = context.resources.openRawResource(R.raw.child)
-        val keyStore = KeyStore.getInstance("PKCS12")
-
-//        keyStore.load(caFileInputStream, sharedPreferencesStorage.getCertPassword().toCharArray())
-
-//        val tmfAlgo = TrustManagerFactory.getDefaultAlgorithm()
-//        val tmf = TrustManagerFactory.getInstance(tmfAlgo)
-//        tmf.init(keyStore)
-////
-////
-//        val keyManagerFactory = KeyManagerFactory.getInstance("X509")
-//        keyManagerFactory.init(keyStore, sharedPreferencesStorage.getCertPassword().toCharArray())
-//
-//        val sslContext = SSLContext.getInstance("TLS")
-//        sslContext.init(keyManagerFactory.keyManagers, arrayOf(trusted), SecureRandom())
-//        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
-//        HttpsURLConnection.setDefaultHostnameVerifier{ p0, p1 -> true }
 
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(arrayOf(SystemKeyManager(sharedPreferencesStorage)), arrayOf(trusted), SecureRandom())
