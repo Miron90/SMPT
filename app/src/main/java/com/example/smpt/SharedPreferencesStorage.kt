@@ -11,7 +11,6 @@ class SharedPreferencesStorage (context: Context) {
     private val sharedPreferences = context.getSharedPreferences("", Context.MODE_PRIVATE)
 
     private lateinit var signs: Array<Sign>
-    private var certPassword = "1234"
     private var alias = ""
     private lateinit var certChain:Array<X509Certificate?>
     private lateinit var privateKey: PrivateKey
