@@ -4,11 +4,40 @@ import android.content.Context
 import androidx.core.content.ContextCompat.getColor
 import androidx.lifecycle.MutableLiveData
 import com.example.smpt.models.Sign
+import java.security.PrivateKey
+import java.security.cert.X509Certificate
 
 class SharedPreferencesStorage (context: Context) {
     private val sharedPreferences = context.getSharedPreferences("", Context.MODE_PRIVATE)
 
     private lateinit var signs: Array<Sign>
+    private var certPassword = "1234"
+    private var alias = ""
+    private lateinit var certChain:Array<X509Certificate?>
+    private lateinit var privateKey: PrivateKey
+
+    fun setChain(password: Array<X509Certificate?>) {
+        certChain = password
+    }
+
+    fun getAlias(): String {
+        return alias
+    }
+
+    fun setAlias(password: String) {
+        alias = password
+    }
+
+    fun getChain(): Array<X509Certificate?> {
+        return certChain
+    }
+    fun setKey(password: PrivateKey) {
+        privateKey = password
+    }
+
+    fun getKey(): PrivateKey {
+        return privateKey
+    }
     private var certPassword = ""
     var ownMarkerColor = MutableLiveData(R.color.blue)
     var otherMarkerColor = MutableLiveData(R.color.red)
