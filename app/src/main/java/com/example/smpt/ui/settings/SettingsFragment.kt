@@ -55,6 +55,7 @@ class SettingsFragment : Fragment() {
         var otherColorSelection = 0
 
         binding.spinnerOtherColor.adapter = adapter1
+        binding.spinnerOwnColor.adapter = adapter2
 
         for (i in 0 until colors.count()) {
             if(sharedPreferences.getOtherMarkerColor() == colors[i].id)
@@ -65,7 +66,6 @@ class SettingsFragment : Fragment() {
 
         binding.spinnerOtherColor.setSelection(otherColorSelection)
         binding.spinnerOwnColor.setSelection(ownColorSelection)
-        binding.spinnerOwnColor.adapter = adapter2
 
         binding.spinnerOtherColor.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {

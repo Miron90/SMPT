@@ -79,5 +79,47 @@ class DialogSign(
             dialog.dismiss()
         }
 
+        button.setOnClickListener {
+            apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
+                override fun onResponse(
+                    call: Call<String>,
+                    response: Response<String>
+                ) {
+                    if (response.body() != null) Log.d(
+                        "API",
+                        "send sign" + response.message()
+                    )
+                    Log.d("API", "send sign" + response.message())
+                }
+
+                override fun onFailure(call: Call<String>?, t: Throwable?) {
+                    Log.d("API", "Error" + t.toString())
+                }
+            })
+
+            dialog.dismiss()
+        }
+
+        button.setOnClickListener {
+            apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
+                override fun onResponse(
+                    call: Call<String>,
+                    response: Response<String>
+                ) {
+                    if (response.body() != null) Log.d(
+                        "API",
+                        "send sign" + response.message()
+                    )
+                    Log.d("API", "send sign" + response.message())
+                }
+
+                override fun onFailure(call: Call<String>?, t: Throwable?) {
+                    Log.d("API", "Error" + t.toString())
+                }
+            })
+
+            dialog.dismiss()
+        }
+
     }
 }

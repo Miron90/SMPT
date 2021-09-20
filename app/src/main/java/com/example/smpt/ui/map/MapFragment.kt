@@ -27,6 +27,7 @@ import org.osmdroid.util.MapTileIndex
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
+import android.widget.Toast
 import com.caverock.androidsvg.SVG
 import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
@@ -213,9 +214,8 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
     fun removeAllMarkers() {
         binding.map.overlays.forEach {
-            binding.map.overlays.remove(it)
-
             if (it is Marker) {
+                binding.map.overlays.remove(it)
                 mapMarkers.remove(it.id)
             }
         }
@@ -323,7 +323,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
     //funkcja od interfejsu MapRecievera (klik na mape)
     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        //Toast.makeText(requireContext(), "Tapped", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Tapped", Toast.LENGTH_SHORT).show()
         return true
     }
 

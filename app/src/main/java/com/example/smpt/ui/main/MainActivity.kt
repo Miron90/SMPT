@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel = get()
-        viewModel.downloadSigns()
+
 
         registerReceiver(foregroundBroadcastReceiver, IntentFilter())
 
@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity() {
             foregroundLocationService = binder.service
             foregroundLocationServiceBound = true
             if (foregroundPermissionApproved()) {
+                viewModel.downloadSigns()
                 Log.d("Location", foregroundLocationService.toString())
                 foregroundLocationService?.subscribeToLocationUpdates()
                     ?: Log.d("Location", "Service not bound")
