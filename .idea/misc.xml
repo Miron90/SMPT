@@ -3,9 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/drawable/ic_close.xml" value="0.2703125" />
         <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/activity_login.xml" value="0.15885416666666666" />
         <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/activity_main.xml" value="0.15885416666666666" />
         <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/activity_splash.xml" value="0.15885416666666666" />
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/fragment_map.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/fragment_settings.xml" value="0.264" />
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/item_color.xml" value="0.4" />
+        <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT/app/src/main/res/layout/item_sign.xml" value="0.13020833333333334" />
         <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT_A/app/src/main/res/drawable/button_background.xml" value="0.21041666666666667" />
         <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT_A/app/src/main/res/drawable/button_text.xml" value="0.21041666666666667" />
         <entry key="..\:/Users/PRAKTYKANT/AndroidStudioProjects/SMPT_A/app/src/main/res/drawable/sfap________.xml" value="0.2703125" />

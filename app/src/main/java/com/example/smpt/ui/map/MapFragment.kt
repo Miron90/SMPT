@@ -20,27 +20,23 @@ import org.osmdroid.views.overlay.Polygon
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import com.example.smpt.R
 import com.example.smpt.R.drawable
 import com.example.smpt.ui.Constants
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.MapTileIndex
-
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
+import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.MapMarker
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.remote.ApiInterface
 import com.example.smpt.ui.dialogs.DialogSign
+import com.example.smpt.ui.settings.SettingsFragment
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
-
-
-
-
 
 class MapFragment : Fragment(), MapEventsReceiver {
 
@@ -68,19 +64,39 @@ class MapFragment : Fragment(), MapEventsReceiver {
         viewModel = get()
 
 
-        foregroundBroadcastReceiver.removeMarkers.observe(viewLifecycleOwner,{
+        sharedPreferences.otherMarkerColor.observe(viewLifecycleOwner, {
+            removeAllMarkers()
+        })
+
+        sharedPreferences.ownMarkerColor.observe(viewLifecycleOwner, {
+            removeAllMarkers()
+        })
+
+        foregroundBroadcastReceiver.removeMarkers.observe(viewLifecycleOwner, {
             removeMarkers()
         })
-            //observer od lokalizacji uzytkownikow
+        //observer od lokalizacji uzytkownikow
         foregroundBroadcastReceiver.userLocations.observe(viewLifecycleOwner, {
             for (loc in it) {
                 //mapMarkers[loc.name!!] = MapMarker(GeoPoint(loc.latitude, loc.longitude),true)
                 if (loc.name.equals(sharedPreferences.getString(Constants().USERNAME)))
-                    draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.green)
-                    //drawLocationMarker(R.color.green, loc.name!!)
+                    draw(
+                        loc.name!!,
+                        GeoPoint(loc.latitude, loc.longitude),
+                        null,
+                        null,
+                        sharedPreferences.getOwnMarkerColor()
+                    )
+                //drawLocationMarker(R.color.green, loc.name!!)
                 else
-                    draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.blue)
-                    //drawLocationMarker(R.color.teal_200, loc.name!!)
+                    draw(
+                        loc.name!!,
+                        GeoPoint(loc.latitude, loc.longitude),
+                        null,
+                        null,
+                        sharedPreferences.getOtherMarkerColor()
+                    )
+                //drawLocationMarker(R.color.teal_200, loc.name!!)
             }
         })
 
@@ -88,10 +104,16 @@ class MapFragment : Fragment(), MapEventsReceiver {
             var shapeId = it.get(0).shapeId
             val shape: MutableList<GeoPoint> = ArrayList<GeoPoint>()
             for (shapeLoc in it) {
-                if(shapeLoc.shapeId!! > shapeId!!){
-                    if(shape.size > 0) {
+                if (shapeLoc.shapeId!! > shapeId!!) {
+                    if (shape.size > 0) {
                         //mapMarkers[shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude] = MapMarker(GeoPoint(shapeLoc.latitude,shapeLoc.longitude),true)
-                        draw(shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude, null, null, shape, 0)
+                        draw(
+                            shape[0].latitude.toString() + " " + shape[shape.size - 1].latitude,
+                            null,
+                            null,
+                            shape,
+                            0
+                        )
                     }
                     shapeId++
                     shape.clear()
@@ -100,10 +122,16 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 shape.add(GeoPoint(shapeLoc.latitude, shapeLoc.longitude))
                 shapeLocation = GeoPoint(shapeLoc.latitude, shapeLoc.longitude)
             }
-            if(shape.size > 0) {
+            if (shape.size > 0) {
                 //mapMarkers[shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude] = MapMarker(GeoPoint(
-                    //shape[0].latitude, shape[0].longitude), true)
-                draw(shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude, null, null, shape, 0)
+                //shape[0].latitude, shape[0].longitude), true)
+                draw(
+                    shape[0].latitude.toString() + " " + shape[shape.size - 1].latitude,
+                    null,
+                    null,
+                    shape,
+                    0
+                )
                 shape.clear()
             }
         })
@@ -113,8 +141,10 @@ class MapFragment : Fragment(), MapEventsReceiver {
             for (sign in it) {
                 Log.d("SIGNS", sign.toString())
                 //mapMarkers[sign.signId.toString()+": "+sign.signCode] = MapMarker(GeoPoint(sign.latitude, sign.longitude),true)
-                draw(sign.signId.toString()+": "+sign.signCode,
-                    GeoPoint(sign.latitude, sign.longitude), sign.signSVG, null, 0)
+                draw(
+                    sign.signId.toString() + ": " + sign.signCode,
+                    GeoPoint(sign.latitude, sign.longitude), sign.signSVG, null, 0
+                )
                 //drawSignMarker(sign)
             }
         })
@@ -142,44 +172,71 @@ class MapFragment : Fragment(), MapEventsReceiver {
             }
         })
 
-        setMapOverlays()
+
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.settings.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, SettingsFragment()).addToBackStack("mapFragment").commit()
+        }
+        setMapOverlays()
     }
 
     private fun removeMarkers() {
         binding.map.overlays.forEach {
-            if(it is Marker && (mapMarkers.containsKey(it.id) && mapMarkers[it.id]?.point?.equals(it.position) == false)){
+            if (it is Marker && (mapMarkers.containsKey(it.id) && mapMarkers[it.id]?.point?.equals(
+                    it.position
+                ) == false)
+            ) {
                 binding.map.overlays.remove(it)
                 mapMarkers.remove(it.id)
-            }else if (it is Polygon && mapMarkers.containsKey(it.id) && mapMarkers[it.id]?.delete==false) {
+            } else if (it is Polygon && mapMarkers.containsKey(it.id) && mapMarkers[it.id]?.delete == false) {
                 binding.map.overlays.remove(it)
                 mapMarkers.remove(it.id)
-            }
-            else if ((it is Marker && mapMarkers[it.id]?.delete == false)){
+            } else if ((it is Marker && mapMarkers[it.id]?.delete == false)) {
                 binding.map.overlays.remove(it)
                 mapMarkers.remove(it.id)
-            }else if((it is Polygon && mapMarkers[it.id]?.delete == false)){
+            } else if ((it is Polygon && mapMarkers[it.id]?.delete == false)) {
                 binding.map.overlays.remove(it)
                 mapMarkers.remove(it.id)
-            }else if (it is Polygon){
-            mapMarkers[it.id] = MapMarker(mapMarkers[it.id]?.point,false)
-            }
-            else if (it is Marker){
-            mapMarkers[it.id] = MapMarker(mapMarkers[it.id]?.point,false)
+            } else if (it is Polygon) {
+                mapMarkers[it.id] = MapMarker(mapMarkers[it.id]?.point, false)
+            } else if (it is Marker) {
+                mapMarkers[it.id] = MapMarker(mapMarkers[it.id]?.point, false)
             }
         }
+    }
+
+    fun removeAllMarkers() {
+        binding.map.overlays.forEach {
+            binding.map.overlays.remove(it)
+
+            if (it is Marker) {
+                mapMarkers.remove(it.id)
+            }
         }
+    }
 
 
-    private fun draw(name: String, position: GeoPoint?, signSvg: String?, polygonArray: MutableList<GeoPoint>?, colorId: Int){
+    private fun draw(
+        name: String,
+        position: GeoPoint?,
+        signSvg: String?,
+        polygonArray: MutableList<GeoPoint>?,
+        colorId: Int
+    ) {
 
-        if(mapMarkers.containsKey(name)){
-            mapMarkers[name] = MapMarker(position,true)
+        if (mapMarkers.containsKey(name)) {
+            mapMarkers[name] = MapMarker(position, true)
             return
-        }else {
-            mapMarkers[name] = MapMarker(position,true)
+        } else {
+            mapMarkers[name] = MapMarker(position, true)
             if (polygonArray != null) {
-                Log.d("works",polygonArray.toString())
+                Log.d("works", polygonArray.toString())
                 val polygon = Polygon()
                 polygonArray.add(polygonArray[0]) //forces the loop to close(connect last point to first point)
                 polygon.fillPaint.color = Color.parseColor("#1EFFE70E") //set fill color
@@ -192,6 +249,8 @@ class MapFragment : Fragment(), MapEventsReceiver {
                     ContextCompat.getDrawable(requireContext(), drawable.ic_emoji_people)
                 if (signSvg != null) {
                     val svg = SVG.getFromString(signSvg)
+                    svg.documentHeight = sharedPreferences.signSize.toFloat()
+                    svg.documentWidth = sharedPreferences.signSize.toFloat()
                     icon = PictureDrawable(svg.renderToPicture())
                 }
                 val currentPosMarker = Marker(binding.map)

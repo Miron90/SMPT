@@ -12,5 +12,15 @@
     <color name="buttonBackgroundDisabled">#C8C8C8</color>
     <color name="buttonTextDisabled">#969696</color>
     <color name="darkGreenTransparent">#4D1B5E20</color>
-    <color name="blue">#0288D1</color>
+    <color name="settings">#22E3EA</color>
+
+    <color name="blue">#0000FF</color>
+    <color name="red">#FF0000</color>
+    <color name="greenRGB">#00FF00</color>
+    <color name="lightBlue">#00B8D4</color>
+    <color name="yellow">#FFD600</color>
+    <color name="violet">#AA00FF</color>
+    <color name="orange">#FF6D00</color>
+    <color name="pink">#FF00E5</color>
+
 </resources>

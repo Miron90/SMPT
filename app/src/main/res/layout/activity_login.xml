@@ -7,6 +7,15 @@
     android:background="@drawable/mapa"
     tools:context=".ui.login.LoginActivity">
 
+    <ImageView
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:src="@drawable/smpt_logo"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
