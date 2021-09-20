@@ -33,13 +33,13 @@
         android:inputType="textPersonName" />
 
     <Button
-        android:id="@+id/addCode"
+        android:id="@+id/btnAddCode"
         android:layout_width="match_parent"
         android:layout_height="59dp"
         android:text="Dodaj z kodu" />
 
     <Button
-        android:id="@+id/addZone"
+        android:id="@+id/btnAddZone"
         android:layout_width="match_parent"
         android:layout_height="58dp"
         android:text="Dodaj obszar" />

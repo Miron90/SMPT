@@ -242,6 +242,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 polygon.fillPaint.color = Color.parseColor("#1EFFE70E") //set fill color
                 polygon.points = polygonArray
                 polygon.id = name
+                polygon.title="xdd"
                 binding.map.overlayManager.add(polygon)
                 binding.map.invalidate()
             } else {

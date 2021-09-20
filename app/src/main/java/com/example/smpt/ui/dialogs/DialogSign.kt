@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.Spinner
+import android.widget.TextView
 import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.Sign
@@ -42,6 +43,7 @@ class DialogSign(
         val spinner = dialog.findViewById(R.id.spinnerSigns) as Spinner
         val adapter = SignAdapter(dialog.context, R.layout.item_sign, R.id.txtSign, signs)
         val button = dialog.findViewById(R.id.btnDialog) as Button
+        val button2 = dialog.findViewById(R.id.btnAddCode) as Button
         var signCode = ""
 
         spinner.onItemSelectedListener = object: OnItemSelectedListener {
@@ -79,8 +81,9 @@ class DialogSign(
             dialog.dismiss()
         }
 
-        button.setOnClickListener {
-            apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
+        button2.setOnClickListener {
+            val signCode2 = (dialog.findViewById(R.id.signCode) as TextView).text.toString()
+            apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode2)).enqueue(object : Callback<String> {
                 override fun onResponse(
                     call: Call<String>,
                     response: Response<String>
