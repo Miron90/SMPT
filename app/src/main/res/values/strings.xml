@@ -5,6 +5,7 @@
     <string name="login__label__login">Wprowadź nazwę użytkownika, aby przejść do aplikacji.</string>
     <string name="login__hint__login">Nazwa użytkownika</string>
     <string name="login__hint__password">Hasło</string>
+    <string name="login__hint__cert">Klucz certyfikatu</string>
     <string name="main_map_description">View representing map</string>
     <string name="main_map_button_text">Show Troops</string>
     <string name="permission_rationale">Location permission needed for core functionality</string>
