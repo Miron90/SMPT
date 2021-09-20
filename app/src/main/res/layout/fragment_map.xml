@@ -17,6 +17,6 @@
         android:layout_margin="@dimen/text_normal"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        app:tint="@color/blue" />
+        app:tint="@color/lightBlue" />
 
 </RelativeLayout>

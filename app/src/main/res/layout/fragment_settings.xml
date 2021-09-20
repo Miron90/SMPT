@@ -60,6 +60,7 @@
                 android:textSize="@dimen/text_normal" />
 
             <EditText
+                android:id="@+id/signSize"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_row="0"
@@ -68,6 +69,7 @@
                 android:layout_marginTop="@dimen/margin_normal"
                 android:inputType="number"
                 android:textSize="@dimen/text_normal" />
+
 
             <TextView
                 android:layout_width="0dp"

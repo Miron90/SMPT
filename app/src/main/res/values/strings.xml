@@ -12,12 +12,13 @@
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
 
     <string name="settings__label">Ustawienia</string>
-    <string name="settings__label__sign_size">Wielkość znaku</string>
+    <string name="settings__label__sign_size">Wielkość znaku (w pikselach)</string>
     <string name="settings__label__user_color">Kolor własnego znacznika</string>
     <string name="settings__label__other_user_color">Kolor obcego znacznika</string>
     <string name="settings__button__cancel">Cofnij</string>
     <string name="settings__button__next">Dalej</string>
     <string name="settings__button__ok">Ok</string>
+    <string name="settings__label__pixels">pikseli</string>
 
     <string name="dialog__button__next">Dodaj</string>
     <string name="dialog_sign__label__choose_sign">Wybierz znak:</string>

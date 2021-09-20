@@ -11,6 +11,8 @@ class SharedPreferencesStorage (context: Context) {
     private var certPassword = ""
     private var ownMarkerColor = R.color.green
     private var otherMarkerColor = R.color.blue
+    var signSize = 64
+
 
     fun setOtherOwnMarkerColor(colorId: Int) {
         otherMarkerColor = colorId

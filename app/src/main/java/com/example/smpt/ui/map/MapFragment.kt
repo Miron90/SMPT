@@ -189,10 +189,11 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 binding.map.overlayManager.add(polygon)
                 binding.map.invalidate()
             } else {
-                var icon: Drawable? =
-                    ContextCompat.getDrawable(requireContext(), drawable.ic_emoji_people)
+                var icon: Drawable? = ContextCompat.getDrawable(requireContext(), drawable.ic_emoji_people)
                 if (signSvg != null) {
                     val svg = SVG.getFromString(signSvg)
+                    svg.documentHeight = sharedPreferences.signSize.toFloat()
+                    svg.documentWidth = sharedPreferences.signSize.toFloat()
                     icon = PictureDrawable(svg.renderToPicture())
                 }
                 val currentPosMarker = Marker(binding.map)
