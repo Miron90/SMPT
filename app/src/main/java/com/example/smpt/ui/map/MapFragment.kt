@@ -20,27 +20,23 @@ import org.osmdroid.views.overlay.Polygon
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import com.example.smpt.R
 import com.example.smpt.R.drawable
 import com.example.smpt.ui.Constants
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.MapTileIndex
-
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
 import com.caverock.androidsvg.SVG
+import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.MapMarker
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.remote.ApiInterface
 import com.example.smpt.ui.dialogs.DialogSign
+import com.example.smpt.ui.settings.SettingsFragment
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
-
-
-
-
 
 class MapFragment : Fragment(), MapEventsReceiver {
 
@@ -76,10 +72,10 @@ class MapFragment : Fragment(), MapEventsReceiver {
             for (loc in it) {
                 //mapMarkers[loc.name!!] = MapMarker(GeoPoint(loc.latitude, loc.longitude),true)
                 if (loc.name.equals(sharedPreferences.getString(Constants().USERNAME)))
-                    draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.green)
+                    draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, sharedPreferences.getOwnMarkerColor())
                     //drawLocationMarker(R.color.green, loc.name!!)
                 else
-                    draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, R.color.blue)
+                    draw(loc.name!!, GeoPoint(loc.latitude, loc.longitude), null, null, sharedPreferences.getOtherMarkerColor())
                     //drawLocationMarker(R.color.teal_200, loc.name!!)
             }
         })
@@ -141,6 +137,11 @@ class MapFragment : Fragment(), MapEventsReceiver {
                         + mImageFilenameEnding)
             }
         })
+
+        binding.settings.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, SettingsFragment()).addToBackStack("map").commit()
+        }
 
         setMapOverlays()
         return view

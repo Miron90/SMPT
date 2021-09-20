@@ -1,6 +1,7 @@
 package com.example.smpt
 
 import android.content.Context
+import androidx.core.content.ContextCompat.getColor
 import com.example.smpt.models.Sign
 
 class SharedPreferencesStorage (context: Context) {
@@ -8,6 +9,24 @@ class SharedPreferencesStorage (context: Context) {
 
     private lateinit var signs: Array<Sign>
     private var certPassword = ""
+    private var ownMarkerColor = R.color.green
+    private var otherMarkerColor = R.color.blue
+
+    fun setOtherOwnMarkerColor(colorId: Int) {
+        otherMarkerColor = colorId
+    }
+
+    fun getOtherMarkerColor(): Int {
+        return otherMarkerColor
+    }
+
+    fun setOwnMarkerColor(colorId: Int) {
+        ownMarkerColor = colorId
+    }
+
+    fun getOwnMarkerColor(): Int {
+        return ownMarkerColor
+    }
 
     fun setCertPassword(password: String) {
         certPassword = password

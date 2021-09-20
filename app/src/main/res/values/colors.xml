@@ -13,4 +13,5 @@
     <color name="buttonTextDisabled">#969696</color>
     <color name="darkGreenTransparent">#4D1B5E20</color>
     <color name="blue">#0288D1</color>
+    <color name="red">#FF0000</color>
 </resources>
