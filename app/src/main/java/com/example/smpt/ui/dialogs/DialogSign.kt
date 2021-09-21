@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
 import android.widget.Spinner
+import android.widget.TextView
 import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.Sign
@@ -59,6 +60,10 @@ class DialogSign(
         spinner.adapter = adapter
 
         button.setOnClickListener {
+            val signCode2 = (dialog.findViewById(R.id.signCode) as TextView).text.toString()
+            if(signCode2.length == 12){
+                signCode = signCode2
+            }
             apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
                 override fun onResponse(
                     call: Call<String>,
@@ -79,47 +84,7 @@ class DialogSign(
             dialog.dismiss()
         }
 
-        button.setOnClickListener {
-            apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
-                override fun onResponse(
-                    call: Call<String>,
-                    response: Response<String>
-                ) {
-                    if (response.body() != null) Log.d(
-                        "API",
-                        "send sign" + response.message()
-                    )
-                    Log.d("API", "send sign" + response.message())
-                }
 
-                override fun onFailure(call: Call<String>?, t: Throwable?) {
-                    Log.d("API", "Error" + t.toString())
-                }
-            })
-
-            dialog.dismiss()
-        }
-
-        button.setOnClickListener {
-            apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
-                override fun onResponse(
-                    call: Call<String>,
-                    response: Response<String>
-                ) {
-                    if (response.body() != null) Log.d(
-                        "API",
-                        "send sign" + response.message()
-                    )
-                    Log.d("API", "send sign" + response.message())
-                }
-
-                override fun onFailure(call: Call<String>?, t: Throwable?) {
-                    Log.d("API", "Error" + t.toString())
-                }
-            })
-
-            dialog.dismiss()
-        }
 
     }
 }
