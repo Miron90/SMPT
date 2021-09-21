@@ -1,7 +1,6 @@
 package com.example.smpt.ui.settings
 
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.databinding.FragmentSettingsBinding
 import com.example.smpt.models.CustomColor
-import com.example.smpt.ui.map.MapFragment
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 

@@ -43,7 +43,6 @@ class ForegroundOnlyLocationService : Service() {
     private var currentLocation: Location? = null
 
     override fun onCreate() {
-        Log.d("Location", "onCreate()")
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -81,7 +80,6 @@ class ForegroundOnlyLocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d("Location", "onStartCommand()")
 
         val cancelLocationTrackingFromNotification =
             intent.getBooleanExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, false)
@@ -94,7 +92,6 @@ class ForegroundOnlyLocationService : Service() {
     }
 
     override fun onBind(intent: Intent): IBinder {
-        Log.d("Location", "onBind()")
 
         stopForeground(true)
         serviceRunningInForeground = false
@@ -103,7 +100,6 @@ class ForegroundOnlyLocationService : Service() {
     }
 
     override fun onRebind(intent: Intent) {
-        Log.d("Location", "onRebind()")
 
         stopForeground(true)
         serviceRunningInForeground = false
@@ -112,12 +108,10 @@ class ForegroundOnlyLocationService : Service() {
     }
 
     override fun onUnbind(intent: Intent): Boolean {
-        Log.d("Location", "onUnbind()")
         return true
     }
 
     override fun onDestroy() {
-        Log.d("Location", "onDestroy()")
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -157,10 +151,8 @@ class ForegroundOnlyLocationService : Service() {
     }
 
     private fun generateNotification(location: Location?): Notification? {
-        Log.d("Location", "generateNotification()")
 
         val mainNotificationText = location.toString()
-        Log.d("Location", mainNotificationText)
         val titleText = getString(R.string.app_name)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

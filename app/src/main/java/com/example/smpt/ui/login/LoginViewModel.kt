@@ -8,11 +8,9 @@ class LoginViewModel(private val sharedPreferences: SharedPreferencesStorage) {
 
     val success = MediatorLiveData<Boolean>()
 
-    fun attemptLogin(login: String, cert: String) {
+    fun attemptLogin(login: String) {
         if(login.isNotEmpty()) {
             sharedPreferences.setString(Constants().USERNAME, login)
-            sharedPreferences.setCertPassword(cert)
-           // sharedPreferences.edit().putString(Constants().USERNAME, login).apply()
             success.postValue(true)
         }
         else

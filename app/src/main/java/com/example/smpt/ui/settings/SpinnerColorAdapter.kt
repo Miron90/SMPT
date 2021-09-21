@@ -2,19 +2,15 @@ package com.example.smpt.ui.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.PictureDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.caverock.androidsvg.SVG
 import com.example.smpt.R
 import com.example.smpt.models.CustomColor
-import com.example.smpt.models.Sign
 
 
 class SpinnerColorAdapter(context: Context, resource: Int, textResource: Int, objects: Array<CustomColor>)

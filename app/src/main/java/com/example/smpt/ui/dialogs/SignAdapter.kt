@@ -17,7 +17,6 @@ import com.example.smpt.models.Sign
 class SignAdapter(context: Context, resource: Int, textResource: Int, objects: Array<Sign>)
     : ArrayAdapter<Sign>(context, resource, textResource, objects) {
 
-    //String[] objects;
     var signs: Array<Sign>
 
     init {
@@ -32,12 +31,6 @@ class SignAdapter(context: Context, resource: Int, textResource: Int, objects: A
         val img = itemView.findViewById<View>(R.id.imgSign) as ImageView
         img.setImageDrawable(
             PictureDrawable(SVG.getFromString(signs[position].signSVG).renderToPicture()))
-//        when {
-//            signs[position].signCode == "SFAP--------" -> img.setImageResource(R.drawable.sfap________)
-//            signs[position].signCode == "SHSX--------" -> img.setImageResource(R.drawable.shsx________)
-//            signs[position].signCode == "SNGPU-------" -> img.setImageResource(R.drawable.sngpu_______)
-//            signs[position].signCode == "SUGPE-----MO" -> img.setImageResource(R.drawable.sugpe_____mo)
-//        }
         return itemView
     }
 

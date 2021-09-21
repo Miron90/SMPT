@@ -32,7 +32,6 @@ import com.caverock.androidsvg.SVG
 import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.MapMarker
-import com.example.smpt.models.ShapeLocalization
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.remote.ApiInterface
 import com.example.smpt.ui.dialogs.DialogSign
@@ -44,7 +43,6 @@ import org.osmdroid.views.CustomZoomButtonsController
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.converter.gson.GsonConverterFactory
 
 class MapFragment : Fragment(), MapEventsReceiver {
 
@@ -97,7 +95,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
                         null,
                         sharedPreferences.getOwnMarkerColor()
                     )
-                //drawLocationMarker(R.color.green, loc.name!!)
                 else
                     draw(
                         loc.name!!,
@@ -106,7 +103,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
                         null,
                         sharedPreferences.getOtherMarkerColor()
                     )
-                //drawLocationMarker(R.color.teal_200, loc.name!!)
             }
         })
 
@@ -116,7 +112,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
             for (shapeLoc in it) {
                 if (shapeLoc.shapeId!! > shapeId!!) {
                     if (shape.size > 0) {
-                        //mapMarkers[shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude] = MapMarker(GeoPoint(shapeLoc.latitude,shapeLoc.longitude),true)
                         draw(
                             shape[0].latitude.toString() + " " + shape[shape.size - 1].latitude,
                             null,
@@ -133,8 +128,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 shapeLocation = GeoPoint(shapeLoc.latitude, shapeLoc.longitude)
             }
             if (shape.size > 0) {
-                //mapMarkers[shape[0].latitude.toString() + " "+ shape[shape.size-1].latitude] = MapMarker(GeoPoint(
-                //shape[0].latitude, shape[0].longitude), true)
                 draw(
                     shape[0].latitude.toString() + " " + shape[shape.size - 1].latitude,
                     null,
@@ -150,12 +143,10 @@ class MapFragment : Fragment(), MapEventsReceiver {
         foregroundBroadcastReceiver.signsLocations.observe(viewLifecycleOwner, {
             for (sign in it) {
                 Log.d("SIGNS", sign.toString())
-                //mapMarkers[sign.signId.toString()+": "+sign.signCode] = MapMarker(GeoPoint(sign.latitude, sign.longitude),true)
                 draw(
                     sign.signId.toString() + ": " + sign.signCode,
                     GeoPoint(sign.latitude, sign.longitude), sign.signSVG, null, 0
                 )
-                //drawSignMarker(sign)
             }
         })
 
@@ -213,7 +204,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
         (linearLayout.findViewById(R.id.addZones) as Button).setOnClickListener{
             val gson = Gson()
 
-            Log.d("maybework", gson.toJson(shapePoints))
             if(shapePoints.size>1) {
                 apiInterface.sendShape(shapePoints).enqueue(object :
                     Callback<String> {
@@ -221,17 +211,13 @@ class MapFragment : Fragment(), MapEventsReceiver {
                         call: Call<String>,
                         response: Response<String>
                     ) {
-                        Log.d("maybework", "shape Error" + response.body().toString())
-                        if (response.body() != null) {
-                            Log.d("works xddd",response.body()!!.toString())
-                        }
+
                     }
 
                     override fun onFailure(
                         call: Call<String>?,
                         t: Throwable?
                     ) {
-                        Log.d("maybework", "shape Error" + t.toString())
                     }
                 })
                 shapePoints.clear()
@@ -425,7 +411,6 @@ class MapFragment : Fragment(), MapEventsReceiver {
     override fun longPressHelper(p: GeoPoint?): Boolean {
         if (p != null) {
             tapLocation = GeoPoint(p)
-            //Toast.makeText(requireContext(), "Tap on (" + p.latitude + "," + p.longitude + ")", Toast.LENGTH_SHORT).show()
             DialogSign(requireContext(), tapLocation, apiInterface, sharedPreferences)
         }
         return false

@@ -1,7 +1,6 @@
 package com.example.smpt.ui.main
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.Sign
 import com.example.smpt.remote.ApiInterface

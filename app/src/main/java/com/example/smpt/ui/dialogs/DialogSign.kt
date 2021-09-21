@@ -48,7 +48,6 @@ class DialogSign(
         spinner.onItemSelectedListener = object: OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 signCode = signs[p2].signCode
-                //dialog.dismiss()
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -69,15 +68,9 @@ class DialogSign(
                     call: Call<String>,
                     response: Response<String>
                 ) {
-                    if (response.body() != null) Log.d(
-                        "API",
-                        "send sign" + response.message()
-                    )
-                    Log.d("API", "send sign" + response.message())
                 }
 
                 override fun onFailure(call: Call<String>?, t: Throwable?) {
-                    Log.d("API", "Error" + t.toString())
                 }
             })
 

@@ -1,31 +1,18 @@
 package com.example.smpt.remote
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
-import android.util.Log
-import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.ui.Constants
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.security.KeyStore
 import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
-import android.security.keystore.KeyProperties
-
-import android.security.KeyChainAliasCallback
-
-import android.security.KeyChain
 import androidx.annotation.RequiresApi
 import com.example.smpt.SystemKeyManager
-import org.koin.android.ext.android.inject
-import org.koin.java.KoinJavaComponent.inject
-import java.security.PrivateKey
-import java.security.cert.X509Certificate
 
 
 class RetrofitClient {

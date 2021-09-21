@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
-import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
@@ -16,16 +15,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smpt.BuildConfig
 import com.example.smpt.R
 import com.example.smpt.databinding.ActivityMainBinding
-import com.example.smpt.models.Sign
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.services.ForegroundOnlyLocationService
 import com.google.android.gms.maps.*
 import com.google.android.material.snackbar.Snackbar
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.android.get
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
@@ -48,13 +43,10 @@ class MainActivity : AppCompatActivity() {
 
         registerReceiver(foregroundBroadcastReceiver, IntentFilter())
 
-        Log.d("Location", foregroundPermissionApproved().toString())
         if (foregroundPermissionApproved()) {
-            Log.d("Location", foregroundPermissionApproved().toString())
             if (foregroundPermissionApproved()) {
                 Log.d("Location", foregroundLocationService.toString())
             } else {
-                Log.d("Location", "request")
                 requestForegroundPermissions()
             }
         }
@@ -95,23 +87,19 @@ class MainActivity : AppCompatActivity() {
 
     private val foregroundServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d("Location", "binder")
             val binder = service as ForegroundOnlyLocationService.LocalBinder
             foregroundLocationService = binder.service
             foregroundLocationServiceBound = true
             if (foregroundPermissionApproved()) {
                 viewModel.downloadSigns()
-                Log.d("Location", foregroundLocationService.toString())
                 foregroundLocationService?.subscribeToLocationUpdates()
                     ?: Log.d("Location", "Service not bound")
             } else {
-                Log.d("Location", "request")
                 requestForegroundPermissions()
             }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            Log.d("Location", "not bound")
             foregroundLocationService = null
             foregroundLocationServiceBound = false
         }
@@ -141,7 +129,6 @@ class MainActivity : AppCompatActivity() {
             }
                 .show()
         } else {
-            Log.d("Location", "Request foreground only permission")
             ActivityCompat.requestPermissions(
                 this@MainActivity,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -156,7 +143,6 @@ class MainActivity : AppCompatActivity() {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        Log.d("Location", "onRequestPermissionResult")
 
         when (requestCode) {
             REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE -> when {

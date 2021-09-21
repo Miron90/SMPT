@@ -18,8 +18,6 @@ import java.security.cert.X509Certificate
 
 import com.example.smpt.SharedPreferencesStorage
 import org.koin.android.ext.android.inject
-import javax.net.ssl.KeyManager
-import javax.net.ssl.KeyManagerFactory
 
 
 class LoginActivity : AppCompatActivity(), KeyChainAliasCallback {
@@ -40,12 +38,12 @@ class LoginActivity : AppCompatActivity(), KeyChainAliasCallback {
                     alias = it
                 }
             },
-            null,  // List of acceptable key types. null for any
-            null,  // issuer, null for any
-            null,  // host name of server requesting the cert, null if unavailable
-            -1,  // port of server requesting the cert, -1 if unavailable
+            null,
+            null,
+            null,
+            -1,
             ""
-        ) // alias to preselect, null if unavailable
+        )
 
 
 
@@ -64,30 +62,26 @@ class LoginActivity : AppCompatActivity(), KeyChainAliasCallback {
         }
 
         binding.btnLogin.setOnClickListener {
-            attemptLogin(binding.inputLogin.text.toString(),this.alias, binding.inputCert.text.toString())
+            attemptLogin(binding.inputLogin.text.toString(),this.alias)
         }
     }
 
-    private fun attemptLogin(login: String, alias:String, cert: String) {
+    private fun attemptLogin(login: String, alias:String) {
 
         Thread {
             if (isKeyChainAccessible()) {
                 sharedPreferences.setAlias(alias)
                 printInfo()
-            } else {
-                Log.d("kluczyk", "Key Chain is not accessible")
             }
         }.start()
 
-        viewModel.attemptLogin(login,cert)
+        viewModel.attemptLogin(login)
     }
 
     override fun alias(alias: String?) {
         if (alias != null) {
             this.alias=alias
             printInfo();
-        } else {
-            Log.d("kluczyk", "User hit Disallow");
         }
     }
     private fun printInfo() {

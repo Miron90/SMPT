@@ -37,7 +37,6 @@ class SharedPreferencesStorage (context: Context) {
     fun getKey(): PrivateKey {
         return privateKey
     }
-    private var certPassword = ""
     var ownMarkerColor = MutableLiveData(R.color.blue)
     var otherMarkerColor = MutableLiveData(R.color.red)
     var signSize = 64
@@ -59,13 +58,6 @@ class SharedPreferencesStorage (context: Context) {
         return ownMarkerColor.value!!
     }
 
-    fun setCertPassword(password: String) {
-        certPassword = password
-    }
-
-    fun getCertPassword(): String {
-        return certPassword
-    }
 
     fun setSigns(signsArray: Array<Sign>) {
         signs = signsArray

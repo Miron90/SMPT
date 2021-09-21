@@ -1,20 +1,16 @@
 package com.example.smpt
 
-import android.app.Activity
 import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
-import com.example.smpt.remote.ApiInterface
 import com.example.smpt.remote.RetrofitClient
 import com.example.smpt.ui.login.LoginViewModel
-import com.example.smpt.ui.main.MainActivity
 import com.example.smpt.ui.main.MainViewModel
 import com.example.smpt.ui.map.MapViewModel
 import com.example.smpt.ui.settings.SettingsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
 
