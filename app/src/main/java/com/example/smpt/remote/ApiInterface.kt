@@ -4,10 +4,12 @@ import com.example.smpt.models.Localization
 import com.example.smpt.models.ShapeLocalization
 import com.example.smpt.models.Sign
 import com.example.smpt.models.SignUploadDto
+import org.osmdroid.util.GeoPoint
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import java.util.ArrayList
 
 interface ApiInterface {
 
@@ -19,6 +21,9 @@ interface ApiInterface {
 
     @GET("api/zone")
     fun getShapeLocalization() : Call<Array<ShapeLocalization>>
+
+    @POST("api/zone")
+    fun sendShape(@Body localization: ArrayList<GeoPoint>): Call<String>
 
     @GET("api/signs")
     fun getSigns() : Call<Array<Sign>>

@@ -27,21 +27,24 @@ import org.osmdroid.util.MapTileIndex
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
-import android.opengl.Visibility
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import com.caverock.androidsvg.SVG
 import com.example.smpt.R
 import com.example.smpt.SharedPreferencesStorage
 import com.example.smpt.models.MapMarker
+import com.example.smpt.models.ShapeLocalization
 import com.example.smpt.receivers.ForegroundOnlyBroadcastReceiver
 import com.example.smpt.remote.ApiInterface
 import com.example.smpt.ui.dialogs.DialogSign
 import com.example.smpt.ui.settings.SettingsFragment
+import com.google.gson.Gson
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.osmdroid.views.CustomZoomButtonsController
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MapFragment : Fragment(), MapEventsReceiver {
 
@@ -54,7 +57,8 @@ class MapFragment : Fragment(), MapEventsReceiver {
     var shapePoints: ArrayList<GeoPoint> = ArrayList()
     private lateinit var tapLocation: GeoPoint
     private val foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver by inject()
-
+    private lateinit var linearLayout:LinearLayout
+    private lateinit var textView:TextView
     var mapEventsOverlay = MapEventsOverlay(this)
     private val sharedPreferences: SharedPreferencesStorage by inject()
     private val apiInterface: ApiInterface by inject()
@@ -190,19 +194,61 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 .add(R.id.fragmentContainerView, SettingsFragment()).addToBackStack("mapFragment").commit()
         }
         binding.map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        val linearLayout = (activity as MainActivity).findViewById(R.id.zonesLayout) as LinearLayout
+        linearLayout = (activity as MainActivity).findViewById(R.id.zonesLayout) as LinearLayout
+        textView = (linearLayout.findViewById(R.id.geoPoints) as TextView)
         binding.zones.setOnClickListener {
             if(linearLayout.visibility == View.GONE){
                 linearLayout.visibility = View.VISIBLE
+                textView.text = shapePoints.size.toString()
             }else {
                 linearLayout.visibility = View.GONE
+                shapePoints.clear()
+                binding.map.overlays.forEach {
+                    if((it is Polygon) && it.id.equals("temp")){
+                        binding.map.overlays.remove(it)
+                    }
+                }
             }
         }
         (linearLayout.findViewById(R.id.addZones) as Button).setOnClickListener{
+            val gson = Gson()
 
+            Log.d("maybework", gson.toJson(shapePoints))
+            if(shapePoints.size>1) {
+                apiInterface.sendShape(shapePoints).enqueue(object :
+                    Callback<String> {
+                    override fun onResponse(
+                        call: Call<String>,
+                        response: Response<String>
+                    ) {
+                        Log.d("maybework", "shape Error" + response.body().toString())
+                        if (response.body() != null) {
+                            Log.d("works xddd",response.body()!!.toString())
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<String>?,
+                        t: Throwable?
+                    ) {
+                        Log.d("maybework", "shape Error" + t.toString())
+                    }
+                })
+                shapePoints.clear()
+                linearLayout.visibility = View.GONE
+                textView.text = shapePoints.size.toString()
+                binding.map.overlays.forEach {
+                    if ((it is Polygon) && it.id.equals("temp")) {
+                        binding.map.overlays.remove(it)
+                    }
+                }
+            }
         }
-        (linearLayout.findViewById(R.id.revert) as Button).setOnClickListener{
-
+        (linearLayout.findViewById(R.id.revert) as ImageButton).setOnClickListener{
+            shapePoints.removeAt(shapePoints.size-1)
+            if(shapePoints.size>1) {
+                drawPolygon(shapePoints)
+            }
         }
         setMapOverlays()
     }
@@ -215,6 +261,8 @@ class MapFragment : Fragment(), MapEventsReceiver {
             ) {
                 binding.map.overlays.remove(it)
                 mapMarkers.remove(it.id)
+            } else if (it is Polygon && it.id.equals("temp")){
+                //do nothing
             } else if (it is Polygon && mapMarkers.containsKey(it.id) && mapMarkers[it.id]?.delete == false) {
                 binding.map.overlays.remove(it)
                 mapMarkers.remove(it.id)
@@ -344,8 +392,33 @@ class MapFragment : Fragment(), MapEventsReceiver {
 
     //funkcja od interfejsu MapRecievera (klik na mape)
     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+        if(linearLayout.visibility == View.VISIBLE){
+            if (p != null) {
+                shapePoints.add(p)
+                if(shapePoints.size>1) {
+                    drawPolygon(shapePoints)
+                }
+            }
+        }
         Toast.makeText(requireContext(), "Tapped", Toast.LENGTH_SHORT).show()
         return true
+    }
+
+    private fun drawPolygon(shapePoints: ArrayList<GeoPoint>) {
+        textView.text = shapePoints.size.toString()
+        binding.map.overlays.forEach {
+            if((it is Polygon) && it.id.equals("temp")){
+                binding.map.overlays.remove(it)
+            }
+        }
+        val polygon = Polygon()
+        val points:ArrayList<GeoPoint> = shapePoints.clone() as ArrayList<GeoPoint>
+        points.add(points[0]) //forces the loop to close(connect last point to first point)
+        polygon.fillPaint.color = Color.parseColor("#9696960E") //set fill color
+        polygon.points = shapePoints
+        polygon.id = "temp"
+        binding.map.overlayManager.add(polygon)
+        binding.map.invalidate()
     }
 
     //funkcja od interfejsu MapRecievera (long klik na mape)
