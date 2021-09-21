@@ -18,30 +18,19 @@
         android:layout_marginTop="@dimen/margin_normal"
         android:minHeight="48dp" />
 
-    <Button
-        android:id="@+id/btnDialog"
-        android:text="@string/dialog__button__next"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <EditText
         android:id="@+id/signCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="sign code"
-        android:inputType="textPersonName" />
+        android:hint="kod znaku"
+        android:inputType="textPersonName"
+        android:minHeight="48dp" />
 
     <Button
-        android:id="@+id/btnAddCode"
+        android:id="@+id/btnDialog"
+        android:text="@string/dialog__button__next"
         android:layout_width="match_parent"
-        android:layout_height="59dp"
-        android:text="Dodaj z kodu" />
-
-    <Button
-        android:id="@+id/btnAddZone"
-        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:text="Dodaj obszar" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

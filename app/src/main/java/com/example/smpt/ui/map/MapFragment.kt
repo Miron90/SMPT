@@ -27,6 +27,9 @@ import org.osmdroid.util.MapTileIndex
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.views.overlay.MapEventsOverlay
 import android.graphics.drawable.PictureDrawable
+import android.opengl.Visibility
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import com.caverock.androidsvg.SVG
 import com.example.smpt.R
@@ -38,6 +41,7 @@ import com.example.smpt.ui.dialogs.DialogSign
 import com.example.smpt.ui.settings.SettingsFragment
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
+import org.osmdroid.views.CustomZoomButtonsController
 
 class MapFragment : Fragment(), MapEventsReceiver {
 
@@ -47,6 +51,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private var mapMarkers: MutableMap<String, MapMarker> = HashMap()
     lateinit var shapeLocation: GeoPoint
+    var shapePoints: ArrayList<GeoPoint> = ArrayList()
     private lateinit var tapLocation: GeoPoint
     private val foregroundBroadcastReceiver: ForegroundOnlyBroadcastReceiver by inject()
 
@@ -183,6 +188,21 @@ class MapFragment : Fragment(), MapEventsReceiver {
         binding.settings.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
                 .add(R.id.fragmentContainerView, SettingsFragment()).addToBackStack("mapFragment").commit()
+        }
+        binding.map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+        val linearLayout = (activity as MainActivity).findViewById(R.id.zonesLayout) as LinearLayout
+        binding.zones.setOnClickListener {
+            if(linearLayout.visibility == View.GONE){
+                linearLayout.visibility = View.VISIBLE
+            }else {
+                linearLayout.visibility = View.GONE
+            }
+        }
+        (linearLayout.findViewById(R.id.addZones) as Button).setOnClickListener{
+
+        }
+        (linearLayout.findViewById(R.id.revert) as Button).setOnClickListener{
+
         }
         setMapOverlays()
     }

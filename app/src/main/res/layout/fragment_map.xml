@@ -4,19 +4,37 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+
     <org.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent">
+
+    </org.osmdroid.views.MapView>
 
     <ImageView
         android:id="@+id/settings"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_settings"
-        android:layout_margin="@dimen/text_normal"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/text_normal"
+        android:layout_marginTop="@dimen/text_normal"
+        android:layout_marginEnd="@dimen/text_normal"
+        android:layout_marginBottom="@dimen/text_normal"
+        android:src="@drawable/ic_settings"
         app:tint="@color/settings" />
+
+    <ImageView
+        android:id="@+id/zones"
+        android:layout_height="40dp"
+        android:layout_width="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/text_normal"
+        android:layout_below="@+id/settings"
+        android:layout_marginEnd="@dimen/text_normal"
+        android:layout_marginBottom="@dimen/text_normal"
+        android:src="@drawable/zones"
+        app:tint="@color/darkGreen" />
 
 </RelativeLayout>

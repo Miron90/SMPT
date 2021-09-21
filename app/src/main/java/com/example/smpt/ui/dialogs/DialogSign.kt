@@ -43,7 +43,6 @@ class DialogSign(
         val spinner = dialog.findViewById(R.id.spinnerSigns) as Spinner
         val adapter = SignAdapter(dialog.context, R.layout.item_sign, R.id.txtSign, signs)
         val button = dialog.findViewById(R.id.btnDialog) as Button
-        val button2 = dialog.findViewById(R.id.btnAddCode) as Button
         var signCode = ""
 
         spinner.onItemSelectedListener = object: OnItemSelectedListener {
@@ -61,49 +60,10 @@ class DialogSign(
         spinner.adapter = adapter
 
         button.setOnClickListener {
-            apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
-                override fun onResponse(
-                    call: Call<String>,
-                    response: Response<String>
-                ) {
-                    if (response.body() != null) Log.d(
-                        "API",
-                        "send sign" + response.message()
-                    )
-                    Log.d("API", "send sign" + response.message())
-                }
-
-                override fun onFailure(call: Call<String>?, t: Throwable?) {
-                    Log.d("API", "Error" + t.toString())
-                }
-            })
-
-            dialog.dismiss()
-        }
-
-        button2.setOnClickListener {
             val signCode2 = (dialog.findViewById(R.id.signCode) as TextView).text.toString()
-            apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode2)).enqueue(object : Callback<String> {
-                override fun onResponse(
-                    call: Call<String>,
-                    response: Response<String>
-                ) {
-                    if (response.body() != null) Log.d(
-                        "API",
-                        "send sign" + response.message()
-                    )
-                    Log.d("API", "send sign" + response.message())
-                }
-
-                override fun onFailure(call: Call<String>?, t: Throwable?) {
-                    Log.d("API", "Error" + t.toString())
-                }
-            })
-
-            dialog.dismiss()
-        }
-
-        button.setOnClickListener {
+            if(signCode2.length == 12){
+                signCode = signCode2
+            }
             apiInterface.sendSign(SignUploadDto(location.longitude, location.latitude, signCode)).enqueue(object : Callback<String> {
                 override fun onResponse(
                     call: Call<String>,
@@ -123,6 +83,8 @@ class DialogSign(
 
             dialog.dismiss()
         }
+
+
 
     }
 }
