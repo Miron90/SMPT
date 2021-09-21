@@ -107,7 +107,10 @@ class MapFragment : Fragment(), MapEventsReceiver {
         })
 
         foregroundBroadcastReceiver.shapeLocations.observe(viewLifecycleOwner, {
-            var shapeId = it.get(0).shapeId
+            var shapeId:Int = -1
+            if(it.size>0) {
+                shapeId = it.get(0).shapeId!!
+            }
             val shape: MutableList<GeoPoint> = ArrayList<GeoPoint>()
             for (shapeLoc in it) {
                 if (shapeLoc.shapeId!! > shapeId!!) {
@@ -202,8 +205,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
             }
         }
         (linearLayout.findViewById(R.id.addZones) as Button).setOnClickListener{
-            val gson = Gson()
-
+        Log.d("beczka spr",shapePoints.size.toString())
             if(shapePoints.size>1) {
                 apiInterface.sendShape(shapePoints).enqueue(object :
                     Callback<String> {
