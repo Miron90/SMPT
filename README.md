@@ -1,7 +1,8 @@
 # System Mobilnego Planowania Taktycznego
 
 ## Opis
-Projekt aplikacji mobilnej do wspomagania planowania taktycznego z wykorzystaniem open street maps.
+Projekt aplikacji mobilnej do wspomagania planowania taktycznego z wykorzystaniem open street maps. Aplikacja potrzebuje 
+wygenerowanego certyfikatu aby działać.
 
 ## Zasada działania
 #### Autoryzacja
@@ -51,6 +52,8 @@ W celu zmian w projekcie należy pobrać projekt uruchomić go używając najlep
 Drugim sposobem jest wgranie w telefon pliku .apk i zainstalowanie go na komputerze.
 
 Dodatkowo, aby aplikacja działała należy uruchomić specjalny serwer który pobrać należy z drugiego repozytorium i uruchomić go.
+Ponadto na telefonie należy zainstalować certyfikat SSL obsługiwany przez serwer, aby móc się zautoryzować w celu uzyskania 
+informacji z serwera.
 
 ## Serwer
 1. SMPT server
