@@ -233,9 +233,22 @@ class MapFragment : Fragment(), MapEventsReceiver {
             }
         }
         (linearLayout.findViewById(R.id.revert) as ImageButton).setOnClickListener{
-            shapePoints.removeAt(shapePoints.size-1)
-            if(shapePoints.size>1) {
-                drawPolygon(shapePoints)
+
+            if(shapePoints.size>0) {
+                shapePoints.removeAt(shapePoints.size-1)
+                textView.text = shapePoints.size.toString()
+                if(shapePoints.size>1) {
+                    drawPolygon(shapePoints)
+                }else{
+                    binding.map.overlays.forEach {
+                        if ((it is Polygon) && it.id.equals("temp")) {
+                            binding.map.overlays.remove(it)
+                        }
+                    }
+                }
+            }else if (shapePoints.size == 0){
+                Toast.makeText(requireContext(), "can do that", Toast.LENGTH_SHORT).show()
+                textView.text = shapePoints.size.toString()
             }
         }
         setMapOverlays()
@@ -388,7 +401,7 @@ class MapFragment : Fragment(), MapEventsReceiver {
                 }
             }
         }
-        Toast.makeText(requireContext(), "Tapped", Toast.LENGTH_SHORT).show()
+
         return true
     }
 
